@@ -52,6 +52,18 @@ class Executor {
                         contadorDePrograma++;
                     }
                     break;
+                case 4: // BRZERO
+                    if (acumulador == 0) {
+                        if ((registradorDeInstrucao & 0b100000) > 0) { // endereçamento indireto
+                            int enderecoDoEndereco = memoria[contadorDePrograma++];
+                            contadorDePrograma = memoria[enderecoDoEndereco];
+                        } else { // endereçamento direto
+                            contadorDePrograma = memoria[contadorDePrograma];
+                        }
+                    } else {
+                        contadorDePrograma++;
+                    }
+                    break;
 
                 default:
                     System.out.println("Instrução não implementada.");
@@ -64,8 +76,8 @@ class Executor {
     public static void main(String[] args) {
         int[] memoria = new int[10_000];
         memoria[0] = 2 | 0b10000000;
-        memoria[1] = -1;
-        memoria[2] = 1 | 0b100000;
+        memoria[1] = 1;
+        memoria[2] = 4 | 0b100000;
         memoria[3] = 7;
         memoria[4] = 2 | 0b10000000;
         memoria[5] = 49;
