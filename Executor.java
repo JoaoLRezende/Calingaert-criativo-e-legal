@@ -28,6 +28,31 @@ class Executor {
                         contadorDePrograma = memoria[contadorDePrograma];
                     }
                     break;
+                case 5: // BRNEG
+                    if (acumulador < 0) {
+                        if ((registradorDeInstrucao & 0b100000) > 0) { // endereçamento indireto
+                            int enderecoDoEndereco = memoria[contadorDePrograma++];
+                            contadorDePrograma = memoria[enderecoDoEndereco];
+                        } else { // endereçamento direto
+                            contadorDePrograma = memoria[contadorDePrograma];
+                        }
+                    } else {
+                        contadorDePrograma++;
+                    }
+                    break;
+                case 1: // BRPOS
+                    if (acumulador > 0) {
+                        if ((registradorDeInstrucao & 0b100000) > 0) { // endereçamento indireto
+                            int enderecoDoEndereco = memoria[contadorDePrograma++];
+                            contadorDePrograma = memoria[enderecoDoEndereco];
+                        } else { // endereçamento direto
+                            contadorDePrograma = memoria[contadorDePrograma];
+                        }
+                    } else {
+                        contadorDePrograma++;
+                    }
+                    break;
+
                 default:
                     System.out.println("Instrução não implementada.");
                     System.exit(1);
@@ -38,13 +63,15 @@ class Executor {
 
     public static void main(String[] args) {
         int[] memoria = new int[10_000];
-        memoria[0] = 0 | 0b100000;
-        memoria[1] = 5;
-        memoria[2] = 2 | 0b10000000;
-        memoria[3] = 49;
-        memoria[4] = 11;
-        memoria[5] = 2;
-
+        memoria[0] = 2 | 0b10000000;
+        memoria[1] = -1;
+        memoria[2] = 1 | 0b100000;
+        memoria[3] = 7;
+        memoria[4] = 2 | 0b10000000;
+        memoria[5] = 49;
+        memoria[6] = 11;
+        memoria[7] = 4;
+        
         Executor executor = new Executor(memoria);
 
         System.out.println("acumulador: " + executor.acumulador);
