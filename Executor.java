@@ -90,3 +90,9 @@ class Executor {
     }
 }
 
+/* To do:
+ * - definir e usar nomes simbólicos para os códigos de operação (com um enum,
+ *   probably) e usá-los no switch. Também usá-los no código de teste.
+ * - definir e usar nomes simbólicos para as máscaras que ativam os modos de
+ *   endereçamento.
+ */
