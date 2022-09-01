@@ -1,3 +1,0 @@
-class Programa {
-    bytes[] programa;
-}
