@@ -20,6 +20,7 @@ class Executor {
                         acumulador += memoria[endereco];
                     }
                     break;
+
                 case 0: // BR
                     if ((registradorDeInstrucao & 0b100000) > 0) { // endereçamento indireto
                         int enderecoDoEndereco = memoria[contadorDePrograma++];
@@ -28,6 +29,7 @@ class Executor {
                         contadorDePrograma = memoria[contadorDePrograma];
                     }
                     break;
+
                 case 5: // BRNEG
                     if (acumulador < 0) {
                         if ((registradorDeInstrucao & 0b100000) > 0) { // endereçamento indireto
@@ -40,6 +42,7 @@ class Executor {
                         contadorDePrograma++;
                     }
                     break;
+
                 case 1: // BRPOS
                     if (acumulador > 0) {
                         if ((registradorDeInstrucao & 0b100000) > 0) { // endereçamento indireto
@@ -52,6 +55,7 @@ class Executor {
                         contadorDePrograma++;
                     }
                     break;
+                    
                 case 4: // BRZERO
                     if (acumulador == 0) {
                         if ((registradorDeInstrucao & 0b100000) > 0) { // endereçamento indireto
