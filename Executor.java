@@ -77,22 +77,22 @@ class Executor {
                     break;
 
                 case Opcodes.CALL:
+                    memoria[ponteiroDaPilha++] = contadorDePrograma + 1;
+                    memoria[ponteiroDaPilha++] = acumulador;
+                    memoria[ponteiroDaPilha++] = registradorDeInstrucao; // TODO: try without this
                     if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO) > 0) {
-                        memoria[ponteiroDaPilha] = contadorDePrograma + 1;
-                        ponteiroDaPilha++;
                         int enderecoDoEndereco = memoria[contadorDePrograma];
                         contadorDePrograma = memoria[enderecoDoEndereco];
                     } else {
-                        memoria[ponteiroDaPilha] = contadorDePrograma + 1;
-                        ponteiroDaPilha++;
                         contadorDePrograma = memoria[contadorDePrograma];
                     }
                     checkStackSize();
                     break;
 
                 case Opcodes.RET:
-                    ponteiroDaPilha--;
-                    contadorDePrograma = memoria[ponteiroDaPilha];
+                    registradorDeInstrucao  = memoria[--ponteiroDaPilha];
+                    acumulador              = memoria[--ponteiroDaPilha];
+                    contadorDePrograma      = memoria[--ponteiroDaPilha];
                     break;
 
                 default:
@@ -117,13 +117,11 @@ class Executor {
         // chama a funcao subtrai1
         memoria[STACK_LIMIT + 2] = Opcodes.CALL;
         memoria[STACK_LIMIT + 3] = STACK_LIMIT + 50;
-        memoria[STACK_LIMIT + 4] = Opcodes.BRPOS;
-        memoria[STACK_LIMIT + 5] = STACK_LIMIT + 2;
-        memoria[STACK_LIMIT + 6] = Opcodes.STOP;
+        memoria[STACK_LIMIT + 4] = Opcodes.STOP;
         
         // funcao subtrai1
         memoria[STACK_LIMIT + 50] = Opcodes.ADD | Bitmasks.ENDERECAMENTO_IMEDIATO;
-        memoria[STACK_LIMIT + 51] = -1;
+        memoria[STACK_LIMIT + 51] = -5;
         memoria[STACK_LIMIT + 52] = Opcodes.RET;
 
         Executor executor = new Executor(memoria);
