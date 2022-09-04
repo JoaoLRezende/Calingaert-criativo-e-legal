@@ -133,6 +133,20 @@ class Executor {
                     }
                     break;
 
+                case Opcodes.MULT:
+                    if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
+                        acumulador = acumulador * memoria[contadorDePrograma++];
+                    } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
+                        int enderecoDoEndereco = memoria[contadorDePrograma++];
+                        int endereco = memoria[enderecoDoEndereco];
+                        acumulador = acumulador * memoria[endereco];
+                    } else { // endereçamento direto
+                        int endereco = memoria[contadorDePrograma++];
+                        acumulador = acumulador * memoria[endereco];
+                    }
+                    break;
+
+
                 default:
                     System.out.println("Instrução não implementada.");
                     System.exit(1);
@@ -151,8 +165,8 @@ class Executor {
         int[] memoria = new int[10_000];
         memoria[STACK_LIMIT + 0] = Opcodes.ADD | Bitmasks.ENDERECAMENTO_IMEDIATO;
         memoria[STACK_LIMIT + 1] = 70;
-        memoria[STACK_LIMIT + 2] = Opcodes.DIVIDE | Bitmasks.ENDERECAMENTO_INDIRETO_OP1;
-        memoria[STACK_LIMIT + 3] = STACK_LIMIT + 20;
+        memoria[STACK_LIMIT + 2] = Opcodes.MULT | Bitmasks.ENDERECAMENTO_IMEDIATO;
+        memoria[STACK_LIMIT + 3] = 16523975;
         memoria[STACK_LIMIT + 4] = Opcodes.STOP;
 
         memoria[STACK_LIMIT + 20] = STACK_LIMIT + 21;
