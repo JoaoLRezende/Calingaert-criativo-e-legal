@@ -8,4 +8,5 @@ public class Opcodes {
     public static final short CALL = 15;
     public static final short RET = 9;
     public static final short COPY = 13;
+    public static final short DIVIDE = 10;
 }
