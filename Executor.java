@@ -20,10 +20,9 @@ class Executor {
 
         switch (registradorDeInstrucao & 0b1111) {
             case Opcodes.ADD:
-                if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) { // endereçamento imediato
+                if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
                     acumulador += memoria[contadorDePrograma++];
-                } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) { // endereçamento
-                                                                                                 // indireto
+                } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
                     int enderecoDoEndereco = memoria[contadorDePrograma++];
                     int endereco = memoria[enderecoDoEndereco];
                     acumulador += memoria[endereco];
@@ -34,7 +33,7 @@ class Executor {
                 break;
 
             case Opcodes.BR:
-                if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) { // endereçamento indireto
+                if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
                     int enderecoDoEndereco = memoria[contadorDePrograma++];
                     contadorDePrograma = memoria[enderecoDoEndereco];
                 } else { // endereçamento direto
@@ -44,7 +43,7 @@ class Executor {
 
             case Opcodes.BRNEG:
                 if (acumulador < 0) {
-                    if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) { // endereçamento indireto
+                    if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
                         int enderecoDoEndereco = memoria[contadorDePrograma++];
                         contadorDePrograma = memoria[enderecoDoEndereco];
                     } else { // endereçamento direto
@@ -57,7 +56,7 @@ class Executor {
 
             case Opcodes.BRPOS:
                 if (acumulador > 0) {
-                    if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) { // endereçamento indireto
+                    if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
                         int enderecoDoEndereco = memoria[contadorDePrograma++];
                         contadorDePrograma = memoria[enderecoDoEndereco];
                     } else { // endereçamento direto
@@ -70,7 +69,7 @@ class Executor {
 
             case Opcodes.BRZERO:
                 if (acumulador == 0) {
-                    if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) { // endereçamento indireto
+                    if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
                         int enderecoDoEndereco = memoria[contadorDePrograma++];
                         contadorDePrograma = memoria[enderecoDoEndereco];
                     } else { // endereçamento direto
