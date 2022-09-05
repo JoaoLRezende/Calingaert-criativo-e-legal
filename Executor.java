@@ -160,6 +160,19 @@ class Executor {
                 }
                 break;
 
+            case Opcodes.LOAD:
+                if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
+                    acumulador = memoria[contadorDePrograma++];
+                } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
+                    int enderecoDoEndereco = memoria[contadorDePrograma++];
+                    int endereco = memoria[enderecoDoEndereco];
+                    acumulador = memoria[endereco];
+                } else { // endereçamento direto
+                    int endereco = memoria[contadorDePrograma++];
+                    acumulador = memoria[endereco];
+                }
+                break;
+
             case Opcodes.STOP:
                 terminou = true;
                 break;
@@ -189,11 +202,12 @@ class Executor {
         memoria[STACK_LIMIT + 4] = Opcodes.STOP;
         
         // funcao subtrai1
-        memoria[STACK_LIMIT + 50] = Opcodes.SUB;
+        memoria[STACK_LIMIT + 50] = Opcodes.LOAD | Bitmasks.ENDERECAMENTO_INDIRETO_OP1;
         memoria[STACK_LIMIT + 51] = STACK_LIMIT + 60;
         memoria[STACK_LIMIT + 52] = Opcodes.RET;
 
-        memoria[STACK_LIMIT + 60] = 3;
+        memoria[STACK_LIMIT + 60] = STACK_LIMIT + 61;
+        memoria[STACK_LIMIT + 61] = 67;
 
         Executor executor = new Executor(memoria);
 
