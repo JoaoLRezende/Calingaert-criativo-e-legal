@@ -10,4 +10,5 @@ public class Opcodes {
     public static final short COPY = 13;
     public static final short DIVIDE = 10;
     public static final short MULT = 14;
+    public static final short SUB = 6;
 }
