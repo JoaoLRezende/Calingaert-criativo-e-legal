@@ -83,8 +83,6 @@ class Executor {
 
             case Opcodes.CALL:
                 memoria[ponteiroDaPilha++] = contadorDePrograma + 1;
-                memoria[ponteiroDaPilha++] = acumulador;
-                memoria[ponteiroDaPilha++] = registradorDeInstrucao; // TODO: try without this
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
                     int enderecoDoEndereco = memoria[contadorDePrograma];
                     contadorDePrograma = memoria[enderecoDoEndereco];
@@ -95,8 +93,6 @@ class Executor {
                 break;
 
             case Opcodes.RET:
-                registradorDeInstrucao = memoria[--ponteiroDaPilha];
-                acumulador = memoria[--ponteiroDaPilha];
                 contadorDePrograma = memoria[--ponteiroDaPilha];
                 break;
 
@@ -172,8 +168,17 @@ class Executor {
     public static void main(String[] args) {
         int[] memoria = new int[10_000];
         memoria[STACK_LIMIT + 0] = Opcodes.ADD | Bitmasks.ENDERECAMENTO_IMEDIATO;
-        memoria[STACK_LIMIT + 1] = 50;
-        memoria[STACK_LIMIT + 2] = Opcodes.STOP;
+        memoria[STACK_LIMIT + 1] = 10;
+
+        // chama a funcao subtrai1
+        memoria[STACK_LIMIT + 2] = Opcodes.CALL;
+        memoria[STACK_LIMIT + 3] = STACK_LIMIT + 50;
+        memoria[STACK_LIMIT + 4] = Opcodes.STOP;
+        
+        // funcao subtrai1
+        memoria[STACK_LIMIT + 50] = Opcodes.ADD | Bitmasks.ENDERECAMENTO_IMEDIATO;
+        memoria[STACK_LIMIT + 51] = -1;
+        memoria[STACK_LIMIT + 52] = Opcodes.RET;
 
         Executor executor = new Executor(memoria);
 
