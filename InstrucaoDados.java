@@ -1,32 +1,34 @@
 public enum InstrucaoDados {
-    ADD(2),
-    BR(2),
-    BRNEG(2),
-    BRPOS(2),
-    BRZERO(2),
-    CALL(2),
-    COPY(3),
-    DIVIDE(2),
-    LOAD(2),
-    MULT(2),
-    READ(2),
-    RET(1),
-    STOP(1),
-    STORE(2),
-    SUB(2),
-    WRITE(2),
-    CONST(1),
-    END(0),
-    EXTDEF(0),
-    EXTR(0),
-    SPACE(1),
-    STACK(0),
-    START(0)
+    ADD(2, 2),
+    BR(0, 2),
+    BRNEG(5, 2),
+    BRPOS(1, 2),
+    BRZERO(4, 2),
+    CALL(15, 2),
+    COPY(13, 3),
+    DIVIDE(10, 2),
+    LOAD(3, 2),
+    MULT(14, 2),
+    READ(12, 2),
+    RET(16, 1),
+    STOP(11, 1),
+    STORE(7, 2),
+    SUB(6, 2),
+    WRITE(8, 2),
+    CONST(-1, 1),
+    END(-1, 0),
+    EXTDEF(1, 0),
+    EXTR(-1, 0),
+    SPACE(-1, 1),
+    STACK(-1, 0),
+    START(-1, 0)
     ;
 
+    public int opcode;
     public int tamanho;
 
-    private InstrucaoDados(int tamanho) {
+    private InstrucaoDados(int opcode, int tamanho) {
+        this.opcode = opcode;
         this.tamanho = tamanho;
     }
 }

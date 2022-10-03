@@ -93,12 +93,30 @@ public class Montador {
 
             switch (instrucao) {
                 case ADD:
-                    escreverShort(outputStream, Opcodes.ADD);
+                case BR:
+                case BRNEG:
+                case BRPOS:
+                case BRZERO:
+                case CALL:
+                case DIVIDE:
+                case MULT:
+                case READ:
+                case LOAD:
+                case STORE:
+                case SUB:
+                case WRITE:
+                    escreverShort(outputStream, instrucao.opcode);
                     contadorDePosicao++;
-                    short op1 = Short.parseShort(scanner.next());
-                    escreverShort(outputStream, op1);
+                    escreverShort(outputStream, processarOperando(scanner.next()));
                     contadorDePosicao++;
                     break;
+                
+                case COPY:
+                    escreverShort(outputStream, instrucao.opcode);
+                    contadorDePosicao++;
+                    break;
+                    // processarOperando(scanner.next());
+
             }
 
 
@@ -108,13 +126,26 @@ public class Montador {
         scanner.close();
     }
 
-    private void escreverShort(FileOutputStream stream, short num) {
+    private void escreverShort(FileOutputStream stream, int num) {
+        short num2 = (short) num;
         try {
-            stream.write((byte) (num >> 8));
-            stream.write((byte) num);
+            stream.write((byte) (num2 >> 8));
+            stream.write((byte) num2);
         } catch (IOException e) {
             System.out.println("Montador: erro em escrever arquivo objeto.");
             System.exit(1);
+        }
+    }
+
+    int processarOperando(String operando) {
+        switch (operando.charAt(0)) {
+            case '@':   // operando imediato
+                return Integer.parseInt(operando.substring(1));
+                // TODO: ativar o bit de endereçamento
+            case '&':   // endereçamento indireto
+                return tabelaDeSimbolos.get(operando.substring(1));
+            default:    // um rótulo (endereçamento direto)
+                return tabelaDeSimbolos.get(operando);
         }
     }
 
