@@ -124,7 +124,9 @@ public class Montador {
                     escreverShort(outputStream, operando2Info.operando);
                     contadorDePosicao += 3;
                     break;
-
+                case STOP:
+                    escreverShort(outputStream, instrucao.opcode);
+                    break;
             }
 
 

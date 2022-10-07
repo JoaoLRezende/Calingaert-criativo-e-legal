@@ -1,2 +1,3 @@
         COPY &end_add &end_add
+        STOP
 end_add BR @0
