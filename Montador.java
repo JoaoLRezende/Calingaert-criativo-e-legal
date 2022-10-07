@@ -90,6 +90,7 @@ public class Montador {
             }
 
             InstrucaoDados instrucao = Instrucoes.getInstrucao(opname);
+            OperandoInfo operandoInfo = null;
 
             switch (instrucao) {
                 case ADD:
@@ -105,7 +106,7 @@ public class Montador {
                 case STORE:
                 case SUB:
                 case WRITE:
-                    OperandoInfo operandoInfo = processarOperando(scanner.next());
+                    operandoInfo = processarOperando(scanner.next());
                     escreverShort(outputStream, instrucao.opcode | operandoInfo.modoDeEnderecamento);
                     escreverShort(outputStream, operandoInfo.operando);
                     contadorDePosicao += 2;
@@ -124,9 +125,17 @@ public class Montador {
                     escreverShort(outputStream, operando2Info.operando);
                     contadorDePosicao += 3;
                     break;
+
                 case STOP:
                 case RET:
                     escreverShort(outputStream, instrucao.opcode);
+                    contadorDePosicao += 1;
+                    break;
+                
+                case CONST:
+                    operandoInfo = processarOperando(scanner.next());
+                    escreverShort(outputStream, operandoInfo.operando);
+                    contadorDePosicao += 1;
                     break;
             }
 
