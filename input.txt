@@ -1,2 +1,2 @@
-        ADD end_add
-end_add ADD @1
+        COPY &end_add &end_add
+end_add BR @0

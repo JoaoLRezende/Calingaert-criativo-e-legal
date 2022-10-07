@@ -112,10 +112,18 @@ public class Montador {
                     break;
                 
                 case COPY:
-                    escreverShort(outputStream, instrucao.opcode);
-                    contadorDePosicao++;
+                    OperandoInfo operando1Info = processarOperando(scanner.next());
+                    OperandoInfo operando2Info = processarOperando(scanner.next());
+                    if (operando2Info.modoDeEnderecamento == Bitmasks.ENDERECAMENTO_INDIRETO_OP1) {
+                        operando2Info.modoDeEnderecamento = Bitmasks.ENDERECAMENTO_INDIRETO_OP2;
+                    }
+
+                    escreverShort(outputStream, instrucao.opcode | operando1Info.modoDeEnderecamento
+                                                                 | operando2Info.modoDeEnderecamento);
+                    escreverShort(outputStream, operando1Info.operando);
+                    escreverShort(outputStream, operando2Info.operando);
+                    contadorDePosicao += 3;
                     break;
-                    // processarOperando(scanner.next());
 
             }
 
