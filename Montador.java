@@ -105,10 +105,10 @@ public class Montador {
                 case STORE:
                 case SUB:
                 case WRITE:
-                    escreverShort(outputStream, instrucao.opcode);
-                    contadorDePosicao++;
-                    escreverShort(outputStream, processarOperando(scanner.next()));
-                    contadorDePosicao++;
+                    OperandoInfo operandoInfo = processarOperando(scanner.next());
+                    escreverShort(outputStream, instrucao.opcode | operandoInfo.modoDeEnderecamento);
+                    escreverShort(outputStream, operandoInfo.operando);
+                    contadorDePosicao += 2;
                     break;
                 
                 case COPY:
@@ -137,15 +137,24 @@ public class Montador {
         }
     }
 
-    int processarOperando(String operando) {
+    class OperandoInfo {
+        short modoDeEnderecamento;
+        int operando;
+
+        public OperandoInfo(short modoDeEnderecamento, int operando) {
+            this.modoDeEnderecamento = modoDeEnderecamento;
+            this.operando = operando;
+        }
+    }
+
+    OperandoInfo processarOperando(String operando) {
         switch (operando.charAt(0)) {
             case '@':   // operando imediato
-                return Integer.parseInt(operando.substring(1));
-                // TODO: ativar o bit de endereçamento
+                return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.parseInt(operando.substring(1)));
             case '&':   // endereçamento indireto
-                return tabelaDeSimbolos.get(operando.substring(1));
+                return new OperandoInfo(Bitmasks.ENDERECAMENTO_INDIRETO_OP1, tabelaDeSimbolos.get(operando.substring(1)));
             default:    // um rótulo (endereçamento direto)
-                return tabelaDeSimbolos.get(operando);
+                return new OperandoInfo((short) 0, tabelaDeSimbolos.get(operando));
         }
     }
 
