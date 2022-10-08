@@ -250,7 +250,9 @@ public class Montador {
 
     OperandoInfo processarOperando(String operando) {
         switch (operando.charAt(0)) {
-            case '@':   // operando imediato
+            case 'H':   // operando imediato hexadecimal (exemplo: H'45G6')
+                return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.decode("0x" + operando.split("\'")[1]));
+            case '@':   // operando imediato decimal
                 return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.parseInt(operando.substring(1)));
             case '&':   // endereçamento indireto
                 return new OperandoInfo(Bitmasks.ENDERECAMENTO_INDIRETO_OP1, pegaEnderecoDeSimbolo(operando.substring(1)));

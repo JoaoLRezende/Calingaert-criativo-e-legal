@@ -1,5 +1,5 @@
 *
-endereco    ADD @20 * oiii
+endereco    ADD H'45'
                 STORE space_end * oiiiiiiiiiiiiiiiiiii
                 STOP
                 *
