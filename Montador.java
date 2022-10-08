@@ -84,7 +84,6 @@ public class Montador {
             if (!Instrucoes.existeOpname(rotuloOuOpname)) {
                 rotulo = rotuloOuOpname;
                 opname = scanner.next();
-                tabelaDeSimbolos.put(rotulo, contadorDePosicao);
             } else {
                 opname = rotuloOuOpname;
             }
