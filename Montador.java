@@ -171,6 +171,9 @@ public class Montador {
                 case EXTR:
                     break;
 
+                case START:
+                    break;
+
                 case END:
                     break main_loop;
             }
