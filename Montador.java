@@ -44,6 +44,11 @@ public class Montador {
             String opname = null;
             String rotuloOuOpname = scanner.next();
         
+            if (rotuloOuOpname.equals("*")) {
+                scanner.nextLine();
+                continue;
+            }
+
             // se houver um rótulo
             if (!Instrucoes.existeOpname(rotuloOuOpname)) {
                 rotulo = rotuloOuOpname;
@@ -107,6 +112,11 @@ public class Montador {
             String rotulo = null;
             String opname = null;
             String rotuloOuOpname = scanner.next();
+
+            if (rotuloOuOpname.equals("*")) {
+                scanner.nextLine();
+                continue;
+            }
         
             // se houver um rótulo
             if (!Instrucoes.existeOpname(rotuloOuOpname)) {
