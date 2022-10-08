@@ -16,6 +16,9 @@ public class Montador {
     // Tabela de símbolos definidos neste módulo para uso por outros módulos.
     HashMap<String, Short> tabelaDeDefinicoes = new HashMap<>();
 
+    // Tabela de símbolos definidos em outros módulos, mas visíveis neste módulo.
+    HashMap<String, Short> tabelaDeUso = new HashMap<>();
+
     public Montador(File modulo) {
         this.modulo = modulo;
     }
@@ -50,6 +53,10 @@ public class Montador {
 
                 if (opname.equals("EXTDEF")) {
                     tabelaDeDefinicoes.put(scanner.next(), (short) -1);
+                }
+
+                if (opname.equals("EXTR")) {
+                    tabelaDeUso.put(scanner.next(), (short) -1);
                 }
             }
 
@@ -156,6 +163,9 @@ public class Montador {
                 case EXTDEF:
                     break;
 
+                case EXTR:
+                    break;
+
                 case END:
                     break main_loop;
             }
@@ -188,14 +198,26 @@ public class Montador {
         }
     }
 
+    Short pegaEnderecoDeSimbolo(String simbolo) {
+        if (tabelaDeSimbolos.containsKey(simbolo)) {
+            return tabelaDeSimbolos.get(simbolo);
+        } else if (tabelaDeDefinicoes.containsKey(simbolo)) {
+            return tabelaDeDefinicoes.get(simbolo);
+        } else if (tabelaDeUso.containsKey(simbolo)) {
+            return tabelaDeUso.get(simbolo);
+        }
+
+        return -1;
+    }
+
     OperandoInfo processarOperando(String operando) {
         switch (operando.charAt(0)) {
             case '@':   // operando imediato
                 return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.parseInt(operando.substring(1)));
             case '&':   // endereçamento indireto
-                return new OperandoInfo(Bitmasks.ENDERECAMENTO_INDIRETO_OP1, tabelaDeSimbolos.get(operando.substring(1)));
+                return new OperandoInfo(Bitmasks.ENDERECAMENTO_INDIRETO_OP1, pegaEnderecoDeSimbolo(operando.substring(1)));
             default:    // um rótulo (endereçamento direto)
-                return new OperandoInfo((short) 0, tabelaDeSimbolos.get(operando));
+                return new OperandoInfo((short) 0, pegaEnderecoDeSimbolo(operando));
         }
     }
 
@@ -204,6 +226,7 @@ public class Montador {
         montador.primeiroPasso();
         System.out.println("Tabela de símbolos: "   + montador.tabelaDeSimbolos.toString());
         System.out.println("Tabela de definições: " + montador.tabelaDeDefinicoes.toString());
+        System.out.println("Tabela de uso: "        + montador.tabelaDeUso.toString());
         montador.segundoPasso();
     }
 }
