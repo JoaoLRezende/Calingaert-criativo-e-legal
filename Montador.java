@@ -21,6 +21,11 @@ public class Montador {
 
     public Montador(File modulo) {
         this.modulo = modulo;
+
+        if(!verificaTamanhoLinhas(modulo)) {
+            System.out.println("Erro: módulo de entrada tem linha maior que 80 caracteres.");
+            System.exit(1);
+        }
     }
 
     public void primeiroPasso() {
@@ -227,6 +232,22 @@ public class Montador {
             default:    // um rótulo (endereçamento direto)
                 return new OperandoInfo((short) 0, pegaEnderecoDeSimbolo(operando));
         }
+    }
+
+    boolean verificaTamanhoLinhas(File modulo) {
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(modulo);
+        } catch (FileNotFoundException e) {
+            System.out.println("Erro em ler o módulo de entrada: " + e.getMessage());
+        }
+        while (scanner.hasNextLine()) {
+            String linha = scanner.nextLine();
+            if (linha.length() > 80) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void main(String[] args) {
