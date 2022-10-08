@@ -160,6 +160,11 @@ public class Montador {
                     contadorDePosicao += 1;
                     break;
 
+                case SPACE:
+                    escreverShort(outputStream, 0);
+                    contadorDePosicao += 1;
+                    break;
+
                 case EXTDEF:
                     break;
 

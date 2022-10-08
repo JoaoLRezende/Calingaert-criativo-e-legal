@@ -1,5 +1,5 @@
-                EXTR end_const
-end_add         ADD end_const
+                ADD @20
+                STORE space_end
                 STOP
-                CONST @49
+space_end       SPACE
                 END
