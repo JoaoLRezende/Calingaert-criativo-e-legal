@@ -21,7 +21,8 @@ public enum InstrucaoDados {
     EXTR(-1, 0),
     SPACE(-1, 1),
     STACK(-1, 0),
-    START(-1, 0)
+    START(-1, 0),
+    EQU(-1, 0)
     ;
 
     public int opcode;

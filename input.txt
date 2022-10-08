@@ -1,6 +1,5 @@
-            EXTR endereco
-            ADD endereco
-            SUB endereco
+            EXTDEF TAM
+TAM         EQU 10
             STOP
 um_numer    CONST 2
             END

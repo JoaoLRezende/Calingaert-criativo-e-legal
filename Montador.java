@@ -90,6 +90,13 @@ public class Montador {
 
             InstrucaoDados instrucao = Instrucoes.getInstrucao(opname);
 
+            if (instrucao == InstrucaoDados.EQU) {
+                if (tabelaDeDefinicoes.containsKey(rotulo)) {
+                    tabelaDeDefinicoes.put(rotulo, new SimboloInterno((short) scanner.nextInt(), SimboloInterno.ModoDeRelocabilidade.ABSOLUTO));
+                } else {
+                    tabelaDeSimbolos.put(rotulo, new SimboloInterno((short) scanner.nextInt(), SimboloInterno.ModoDeRelocabilidade.ABSOLUTO));                }
+            }
+
             contadorDePosicao += instrucao.tamanho;
 
             scanner.nextLine();

@@ -27,6 +27,7 @@ public class Instrucoes {
         mapa.put("SPACE", InstrucaoDados.SPACE);
         mapa.put("STACK", InstrucaoDados.STACK);
         mapa.put("START", InstrucaoDados.START);
+        mapa.put("EQU", InstrucaoDados.EQU);
     }
 
     static InstrucaoDados getInstrucao(String nomeDaInstrucao) {
