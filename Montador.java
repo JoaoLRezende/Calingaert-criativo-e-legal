@@ -10,11 +10,6 @@ import java.util.HashSet;
 public class Montador {
     File modulo;
     
-    // TODO: garantir que os nomes das tabelas abaixo são realmente os nomes usados pelo Ferrugem.
-
-    // Tabela de símbolos internos ao módulo que está sendo montado.
-    HashMap<String, Short> tabelaDeSimbolos = new HashMap<>();
-
     static class SimboloInterno {
         enum ModoDeRelocabilidade { ABSOLUTO, RELATIVO };
 
@@ -30,6 +25,11 @@ public class Montador {
             return "" + endereco + " " + modoDeRelocabilidade;
         }
     }
+
+    // TODO: garantir que os nomes das tabelas abaixo são realmente os nomes usados pelo Ferrugem.
+
+    // Tabela de símbolos internos ao módulo que está sendo montado.
+    HashMap<String, SimboloInterno> tabelaDeSimbolos = new HashMap<>();
 
     // Tabela de símbolos definidos neste módulo para uso por outros módulos.
     HashMap<String, SimboloInterno> tabelaDeDefinicoes = new HashMap<>();
@@ -72,15 +72,15 @@ public class Montador {
                 rotulo = rotuloOuOpname;
                 opname = scanner.next();
                 if (tabelaDeDefinicoes.containsKey(rotulo)) {
-                    tabelaDeDefinicoes.put(rotulo, new SimboloInterno(contadorDePosicao, SimboloInterno.ModoDeRelocabilidade.ABSOLUTO));
+                    tabelaDeDefinicoes.put(rotulo, new SimboloInterno(contadorDePosicao, SimboloInterno.ModoDeRelocabilidade.RELATIVO));
                 } else {
-                    tabelaDeSimbolos.put(rotulo, contadorDePosicao);
+                    tabelaDeSimbolos.put(rotulo, new SimboloInterno(contadorDePosicao, SimboloInterno.ModoDeRelocabilidade.RELATIVO));
                 }
             } else {
                 opname = rotuloOuOpname;
 
                 if (opname.equals("EXTDEF")) {
-                    tabelaDeDefinicoes.put(scanner.next(), new SimboloInterno((short) -1, SimboloInterno.ModoDeRelocabilidade.ABSOLUTO));
+                    tabelaDeDefinicoes.put(scanner.next(), new SimboloInterno((short) -1, SimboloInterno.ModoDeRelocabilidade.RELATIVO));
                 }
 
                 if (opname.equals("EXTR")) {
@@ -256,7 +256,7 @@ public class Montador {
 
     Short pegaEnderecoDeSimbolo(String simbolo) {
         if (tabelaDeSimbolos.containsKey(simbolo)) {
-            return tabelaDeSimbolos.get(simbolo);
+            return tabelaDeSimbolos.get(simbolo).endereco;
         } else if (tabelaDeDefinicoes.containsKey(simbolo)) {
             return tabelaDeDefinicoes.get(simbolo).endereco;
         } else if (tabelaDeUso.containsKey(simbolo)) {
