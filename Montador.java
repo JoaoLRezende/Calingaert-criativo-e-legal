@@ -3,7 +3,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Montador {
     File modulo;
@@ -13,8 +15,24 @@ public class Montador {
     // Tabela de símbolos internos ao módulo que está sendo montado.
     HashMap<String, Short> tabelaDeSimbolos = new HashMap<>();
 
+    static class SimboloInterno {
+        enum ModoDeRelocabilidade { ABSOLUTO, RELATIVO };
+
+        short endereco;
+        ModoDeRelocabilidade modoDeRelocabilidade;
+
+        public SimboloInterno(short endereco, Montador.SimboloInterno.ModoDeRelocabilidade modoDeRelocabilidade) {
+            this.endereco = endereco;
+            this.modoDeRelocabilidade = modoDeRelocabilidade;
+        }
+
+        public String toString() {
+            return "" + endereco + " " + modoDeRelocabilidade;
+        }
+    }
+
     // Tabela de símbolos definidos neste módulo para uso por outros módulos.
-    HashMap<String, Short> tabelaDeDefinicoes = new HashMap<>();
+    HashMap<String, SimboloInterno> tabelaDeDefinicoes = new HashMap<>();
 
     // Tabela de símbolos definidos em outros módulos, mas visíveis neste módulo.
     HashMap<String, Short> tabelaDeUso = new HashMap<>();
@@ -54,7 +72,7 @@ public class Montador {
                 rotulo = rotuloOuOpname;
                 opname = scanner.next();
                 if (tabelaDeDefinicoes.containsKey(rotulo)) {
-                    tabelaDeDefinicoes.put(rotulo, contadorDePosicao);
+                    tabelaDeDefinicoes.put(rotulo, new SimboloInterno(contadorDePosicao, SimboloInterno.ModoDeRelocabilidade.ABSOLUTO));
                 } else {
                     tabelaDeSimbolos.put(rotulo, contadorDePosicao);
                 }
@@ -62,7 +80,7 @@ public class Montador {
                 opname = rotuloOuOpname;
 
                 if (opname.equals("EXTDEF")) {
-                    tabelaDeDefinicoes.put(scanner.next(), (short) -1);
+                    tabelaDeDefinicoes.put(scanner.next(), new SimboloInterno((short) -1, SimboloInterno.ModoDeRelocabilidade.ABSOLUTO));
                 }
 
                 if (opname.equals("EXTR")) {
@@ -83,11 +101,11 @@ public class Montador {
     }
 
     void verificarTamanhoSimbolos() {
-        HashMap<String, Short> simbolos = new HashMap<>();
-        simbolos.putAll(tabelaDeSimbolos);
-        simbolos.putAll(tabelaDeDefinicoes);
-        simbolos.putAll(tabelaDeUso);
-        for (String simbolo : simbolos.keySet()) {
+        Set<String> simbolos = new HashSet<>();
+        simbolos.addAll(tabelaDeSimbolos.keySet());
+        simbolos.addAll(tabelaDeDefinicoes.keySet());
+        simbolos.addAll(tabelaDeUso.keySet());
+        for (String simbolo : simbolos) {
             if (simbolo.length() > 8) {
                 System.out.println("Erro: o símbolo " + simbolo + " tem comprimento maior que 8.");
                 System.exit(1);
@@ -240,7 +258,7 @@ public class Montador {
         if (tabelaDeSimbolos.containsKey(simbolo)) {
             return tabelaDeSimbolos.get(simbolo);
         } else if (tabelaDeDefinicoes.containsKey(simbolo)) {
-            return tabelaDeDefinicoes.get(simbolo);
+            return tabelaDeDefinicoes.get(simbolo).endereco;
         } else if (tabelaDeUso.containsKey(simbolo)) {
             return tabelaDeUso.get(simbolo);
         }

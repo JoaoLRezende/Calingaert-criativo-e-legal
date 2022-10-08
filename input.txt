@@ -1,7 +1,6 @@
-*
 endereco    ADD H'45'
-                STORE space_end * oiiiiiiiiiiiiiiiiiii
-                STOP
-                *
-space_en       SPACE
-                END
+            STORE space_end
+            STOP
+
+space_en    SPACE
+            END
