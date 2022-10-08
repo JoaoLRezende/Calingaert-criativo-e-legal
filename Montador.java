@@ -7,7 +7,14 @@ import java.util.HashMap;
 
 public class Montador {
     File modulo;
+    
+    // TODO: garantir que os nomes das tabelas abaixo são realmente os nomes usados pelo Ferrugem.
+
+    // Tabela de símbolos internos ao módulo que está sendo montado.
     HashMap<String, Short> tabelaDeSimbolos = new HashMap<>();
+
+    // Tabela de símbolos definidos neste módulo para uso por outros módulos.
+    HashMap<String, Short> tabelaDeDefinicoes = new HashMap<>();
 
     public Montador(File modulo) {
         this.modulo = modulo;
@@ -33,9 +40,17 @@ public class Montador {
             if (!Instrucoes.existeOpname(rotuloOuOpname)) {
                 rotulo = rotuloOuOpname;
                 opname = scanner.next();
-                tabelaDeSimbolos.put(rotulo, contadorDePosicao);
+                if (tabelaDeDefinicoes.containsKey(rotulo)) {
+                    tabelaDeDefinicoes.put(rotulo, contadorDePosicao);
+                } else {
+                    tabelaDeSimbolos.put(rotulo, contadorDePosicao);
+                }
             } else {
                 opname = rotuloOuOpname;
+
+                if (opname.equals("EXTDEF")) {
+                    tabelaDeDefinicoes.put(scanner.next(), (short) -1);
+                }
             }
 
             InstrucaoDados instrucao = Instrucoes.getInstrucao(opname);
@@ -75,6 +90,7 @@ public class Montador {
 
         short contadorDePosicao = 0;
 
+        main_loop:
         while (scanner.hasNext()) {
             String rotulo = null;
             String opname = null;
@@ -136,6 +152,12 @@ public class Montador {
                     escreverShort(outputStream, operandoInfo.operando);
                     contadorDePosicao += 1;
                     break;
+
+                case EXTDEF:
+                    break;
+
+                case END:
+                    break main_loop;
             }
 
 
@@ -180,7 +202,8 @@ public class Montador {
     public static void main(String[] args) {
         Montador montador = new Montador(new File("input.txt"));
         montador.primeiroPasso();
-        System.out.println(montador.tabelaDeSimbolos.toString());
+        System.out.println("Tabela de símbolos: "   + montador.tabelaDeSimbolos.toString());
+        System.out.println("Tabela de definições: " + montador.tabelaDeDefinicoes.toString());
         montador.segundoPasso();
     }
 }

@@ -1,3 +1,5 @@
-        ADD @0
-        STOP
-end_add CONST @49
+                EXTDEF end_const
+end_add         ADD @0
+                STOP
+end_const       CONST @49
+                END
