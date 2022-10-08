@@ -1,5 +1,7 @@
-                ADD @20
-                STORE space_end
+*
+endereco    ADD @20 * oiii
+                STORE space_end * oiiiiiiiiiiiiiiiiiii
                 STOP
-space_end       SPACE
+                *
+space_en       SPACE
                 END

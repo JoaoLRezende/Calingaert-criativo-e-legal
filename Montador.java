@@ -78,6 +78,21 @@ public class Montador {
         }
 
         scanner.close();
+
+        verificarTamanhoSimbolos();
+    }
+
+    void verificarTamanhoSimbolos() {
+        HashMap<String, Short> simbolos = new HashMap<>();
+        simbolos.putAll(tabelaDeSimbolos);
+        simbolos.putAll(tabelaDeDefinicoes);
+        simbolos.putAll(tabelaDeUso);
+        for (String simbolo : simbolos.keySet()) {
+            if (simbolo.length() > 8) {
+                System.out.println("Erro: o símbolo " + simbolo + " tem comprimento maior que 8.");
+                System.exit(1);
+            }
+        }
     }
 
     public void segundoPasso() {
