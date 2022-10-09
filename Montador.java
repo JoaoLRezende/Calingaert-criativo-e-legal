@@ -302,12 +302,16 @@ public class Montador {
         return true;
     }
 
+    void executar() {
+        primeiroPasso();
+        segundoPasso();
+    }
+
     public static void main(String[] args) {
         Montador montador = new Montador(new File("input.txt"));
-        montador.primeiroPasso();
+        montador.executar();
         System.out.println("Tabela de símbolos: "   + montador.tabelaDeSimbolos.toString());
         System.out.println("Tabela de definições: " + montador.tabelaDeDefinicoes.toString());
         System.out.println("Tabela de uso: "        + montador.tabelaDeUso.toString());
-        montador.segundoPasso();
     }
 }
