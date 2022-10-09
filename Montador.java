@@ -9,30 +9,14 @@ import java.util.HashSet;
 
 public class Montador {
     File modulo;
-    
-    static class SimboloInterno {
-        enum ModoDeRelocabilidade { ABSOLUTO, RELATIVO };
-
-        short endereco;
-        ModoDeRelocabilidade modoDeRelocabilidade;
-
-        public SimboloInterno(short endereco, Montador.SimboloInterno.ModoDeRelocabilidade modoDeRelocabilidade) {
-            this.endereco = endereco;
-            this.modoDeRelocabilidade = modoDeRelocabilidade;
-        }
-
-        public String toString() {
-            return "" + endereco + " " + modoDeRelocabilidade;
-        }
-    }
 
     // TODO: garantir que os nomes das tabelas abaixo são realmente os nomes usados pelo Ferrugem.
 
     // Tabela de símbolos internos ao módulo que está sendo montado.
-    HashMap<String, SimboloInterno> tabelaDeSimbolos = new HashMap<>();
+    HashMap<String, Simbolo> tabelaDeSimbolos = new HashMap<>();
 
     // Tabela de símbolos definidos neste módulo para uso por outros módulos.
-    HashMap<String, SimboloInterno> tabelaDeDefinicoes = new HashMap<>();
+    HashMap<String, Simbolo> tabelaDeDefinicoes = new HashMap<>();
 
     // Tabela de símbolos definidos em outros módulos, mas visíveis neste módulo.
     HashMap<String, Short> tabelaDeUso = new HashMap<>();
@@ -72,15 +56,15 @@ public class Montador {
                 rotulo = rotuloOuOpname;
                 opname = scanner.next();
                 if (tabelaDeDefinicoes.containsKey(rotulo)) {
-                    tabelaDeDefinicoes.put(rotulo, new SimboloInterno(contadorDePosicao, SimboloInterno.ModoDeRelocabilidade.RELATIVO));
+                    tabelaDeDefinicoes.put(rotulo, new Simbolo(contadorDePosicao, Simbolo.ModoDeRelocabilidade.RELATIVO));
                 } else {
-                    tabelaDeSimbolos.put(rotulo, new SimboloInterno(contadorDePosicao, SimboloInterno.ModoDeRelocabilidade.RELATIVO));
+                    tabelaDeSimbolos.put(rotulo, new Simbolo(contadorDePosicao, Simbolo.ModoDeRelocabilidade.RELATIVO));
                 }
             } else {
                 opname = rotuloOuOpname;
 
                 if (opname.equals("EXTDEF")) {
-                    tabelaDeDefinicoes.put(scanner.next(), new SimboloInterno((short) -1, SimboloInterno.ModoDeRelocabilidade.RELATIVO));
+                    tabelaDeDefinicoes.put(scanner.next(), new Simbolo((short) -1, Simbolo.ModoDeRelocabilidade.RELATIVO));
                 }
 
                 if (opname.equals("EXTR")) {
@@ -92,9 +76,9 @@ public class Montador {
 
             if (instrucao == InstrucaoDados.EQU) {
                 if (tabelaDeDefinicoes.containsKey(rotulo)) {
-                    tabelaDeDefinicoes.put(rotulo, new SimboloInterno((short) scanner.nextInt(), SimboloInterno.ModoDeRelocabilidade.ABSOLUTO));
+                    tabelaDeDefinicoes.put(rotulo, new Simbolo((short) scanner.nextInt(), Simbolo.ModoDeRelocabilidade.ABSOLUTO));
                 } else {
-                    tabelaDeSimbolos.put(rotulo, new SimboloInterno((short) scanner.nextInt(), SimboloInterno.ModoDeRelocabilidade.ABSOLUTO));                }
+                    tabelaDeSimbolos.put(rotulo, new Simbolo((short) scanner.nextInt(), Simbolo.ModoDeRelocabilidade.ABSOLUTO));                }
             }
 
             contadorDePosicao += instrucao.tamanho;
