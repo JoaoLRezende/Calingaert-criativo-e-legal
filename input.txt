@@ -1,6 +1,10 @@
-            EXTDEF TAM
-            ADD um_numero
-TAM         EQU 10
-            STOP
-um_numer    CONST 2
-            END
+        EXTR source
+        EXTR dest
+        EXTR x
+
+        COPY &dest source
+        SUB @5
+        MULT @5
+        STOP
+num:    CONST @9
+        END

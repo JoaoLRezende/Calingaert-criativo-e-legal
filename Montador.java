@@ -19,7 +19,10 @@ public class Montador {
     HashMap<String, Simbolo> tabelaDeDefinicoes = new HashMap<>();
 
     // Tabela de símbolos definidos em outros módulos, mas visíveis neste módulo.
-    HashMap<String, Short> tabelaDeUso = new HashMap<>();
+    HashSet<String> simbolosExternos = new HashSet<>();
+
+    // Tabela de referências a símbolos externos.
+    HashMap<String, Short> tabelaDeUsos = new HashMap<>();
 
     public Montador(File modulo) {
         this.modulo = modulo;
@@ -68,7 +71,7 @@ public class Montador {
                 }
 
                 if (opname.equals("EXTR")) {
-                    tabelaDeUso.put(scanner.next(), (short) -1);
+                    simbolosExternos.add(scanner.next());
                 }
             }
 
@@ -95,7 +98,7 @@ public class Montador {
         Set<String> simbolos = new HashSet<>();
         simbolos.addAll(tabelaDeSimbolos.keySet());
         simbolos.addAll(tabelaDeDefinicoes.keySet());
-        simbolos.addAll(tabelaDeUso.keySet());
+        simbolos.addAll(simbolosExternos);
         for (String simbolo : simbolos) {
             if (simbolo.length() > 8) {
                 System.out.println("Erro: o símbolo " + simbolo + " tem comprimento maior que 8.");
@@ -167,15 +170,16 @@ public class Montador {
                 case STORE:
                 case SUB:
                 case WRITE:
-                    operandoInfo = processarOperando(scanner.next());
+                    operandoInfo = processarOperando(scanner.next(), (short) (contadorDePosicao + 1));
                     escreverShort(outputStream, instrucao.opcode | operandoInfo.modoDeEnderecamento);
                     escreverShort(outputStream, operandoInfo.operando);
                     contadorDePosicao += 2;
+
                     break;
                 
                 case COPY:
-                    OperandoInfo operando1Info = processarOperando(scanner.next());
-                    OperandoInfo operando2Info = processarOperando(scanner.next());
+                    OperandoInfo operando1Info = processarOperando(scanner.next(), (short) (contadorDePosicao + 1));
+                    OperandoInfo operando2Info = processarOperando(scanner.next(), (short) (contadorDePosicao + 2));
                     if (operando2Info.modoDeEnderecamento == Bitmasks.ENDERECAMENTO_INDIRETO_OP1) {
                         operando2Info.modoDeEnderecamento = Bitmasks.ENDERECAMENTO_INDIRETO_OP2;
                     }
@@ -194,7 +198,7 @@ public class Montador {
                     break;
                 
                 case CONST:
-                    operandoInfo = processarOperando(scanner.next());
+                    operandoInfo = processarOperando(scanner.next(), (short) (contadorDePosicao + 1));
                     escreverShort(outputStream, operandoInfo.operando);
                     contadorDePosicao += 1;
                     break;
@@ -250,22 +254,30 @@ public class Montador {
             return tabelaDeSimbolos.get(simbolo).endereco;
         } else if (tabelaDeDefinicoes.containsKey(simbolo)) {
             return tabelaDeDefinicoes.get(simbolo).endereco;
-        } else if (tabelaDeUso.containsKey(simbolo)) {
-            return tabelaDeUso.get(simbolo);
+        } else if (simbolosExternos.contains(simbolo)) {
+            return 0;
         }
 
+        System.out.println("Rótulo não definido: " + simbolo);
+        System.exit(1);
         return -1;
     }
 
-    OperandoInfo processarOperando(String operando) {
+    OperandoInfo processarOperando(String operando, short posição) {
         switch (operando.charAt(0)) {
             case 'H':   // operando imediato hexadecimal (exemplo: H'45G6')
                 return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.decode("0x" + operando.split("\'")[1]));
             case '@':   // operando imediato decimal
                 return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.parseInt(operando.substring(1)));
             case '&':   // endereçamento indireto
+                if (simbolosExternos.contains(operando.substring(1))) {
+                    tabelaDeUsos.put(operando.substring(1), posição);
+                }
                 return new OperandoInfo(Bitmasks.ENDERECAMENTO_INDIRETO_OP1, pegaEnderecoDeSimbolo(operando.substring(1)));
             default:    // um rótulo (endereçamento direto)
+                if (simbolosExternos.contains(operando)) {
+                    tabelaDeUsos.put(operando, posição);
+                }
                 return new OperandoInfo((short) 0, pegaEnderecoDeSimbolo(operando));
         }
     }
@@ -296,6 +308,6 @@ public class Montador {
         montador.executar();
         System.out.println("Tabela de símbolos: "   + montador.tabelaDeSimbolos.toString());
         System.out.println("Tabela de definições: " + montador.tabelaDeDefinicoes.toString());
-        System.out.println("Tabela de uso: "        + montador.tabelaDeUso.toString());
+        System.out.println("Tabela de uso: "        + montador.tabelaDeUsos.toString());
     }
 }
