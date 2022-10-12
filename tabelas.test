@@ -1,0 +1,9 @@
+# tabela de definições
+simbolo    | endereco   | relocabilidade
+x          | 10         | RELATIVO  
+source     | 9          | RELATIVO  
+dest       | 11         | RELATIVO  
+# tabela de usos
+simbolo    | endereco  
+pipi       | 1         
+xixi       | 5         

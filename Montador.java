@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.HashMap;
@@ -301,6 +302,17 @@ public class Montador {
     void executar() {
         primeiroPasso();
         segundoPasso();
+
+        try {
+            String outputFilename = "tabelas.test";
+            File arquivo = new File(outputFilename);
+            PrintStream outStream = new PrintStream(arquivo);    
+            Tabelas.escreveTabelaDeDefinicoes(tabelaDeDefinicoes, outStream);
+            Tabelas.escreveTabelaDeUso(tabelaDeUsos, outStream);
+            outStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

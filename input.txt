@@ -1,10 +1,16 @@
-        EXTR source
-        EXTR dest
-        EXTR x
+        EXTR pipi
+        EXTR xixi
+        EXTDEF source
+        EXTDEF dest
+        EXTDEF x
 
-        COPY &dest source
-        SUB @5
+        MULT pipi
+        SUB xixi
+        MULT xixi
         MULT @5
+
         STOP
-num:    CONST @9
+source  CONST @69
+x       CONST @420
+dest    CONST @111
         END
