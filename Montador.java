@@ -2,11 +2,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 public class Montador {
     File modulo;
@@ -24,6 +26,8 @@ public class Montador {
 
     // Tabela de referências a símbolos externos.
     HashMap<String, Short> tabelaDeUsos = new HashMap<>();
+
+    ArrayList<Boolean> mapaDeRelocacao = new ArrayList<>();
 
     public Montador(File modulo) {
         this.modulo = modulo;
@@ -172,8 +176,8 @@ public class Montador {
                 case SUB:
                 case WRITE:
                     operandoInfo = processarOperando(scanner.next(), (short) (contadorDePosicao + 1));
-                    escreverShort(outputStream, instrucao.opcode | operandoInfo.modoDeEnderecamento);
-                    escreverShort(outputStream, operandoInfo.operando);
+                    escreverShort(outputStream, instrucao.opcode | operandoInfo.modoDeEnderecamento, false);
+                    escreverShort(outputStream, operandoInfo.operando, operandoInfo.relocabilidade);
                     contadorDePosicao += 2;
 
                     break;
@@ -186,26 +190,27 @@ public class Montador {
                     }
 
                     escreverShort(outputStream, instrucao.opcode | operando1Info.modoDeEnderecamento
-                                                                 | operando2Info.modoDeEnderecamento);
-                    escreverShort(outputStream, operando1Info.operando);
-                    escreverShort(outputStream, operando2Info.operando);
+                                                                 | operando2Info.modoDeEnderecamento,
+                                                false);
+                    escreverShort(outputStream, operando1Info.operando, operando1Info.relocabilidade);
+                    escreverShort(outputStream, operando2Info.operando, operando2Info.relocabilidade);
                     contadorDePosicao += 3;
                     break;
 
                 case STOP:
                 case RET:
-                    escreverShort(outputStream, instrucao.opcode);
+                    escreverShort(outputStream, instrucao.opcode, false);
                     contadorDePosicao += 1;
                     break;
                 
                 case CONST:
                     operandoInfo = processarOperando(scanner.next(), (short) (contadorDePosicao + 1));
-                    escreverShort(outputStream, operandoInfo.operando);
+                    escreverShort(outputStream, operandoInfo.operando, operandoInfo.relocabilidade);
                     contadorDePosicao += 1;
                     break;
 
                 case SPACE:
-                    escreverShort(outputStream, 0);
+                    escreverShort(outputStream, 0, false);
                     contadorDePosicao += 1;
                     break;
 
@@ -229,7 +234,7 @@ public class Montador {
         scanner.close();
     }
 
-    private void escreverShort(FileOutputStream stream, int num) {
+    private void escreverShort(FileOutputStream stream, int num, boolean relocabilidade) {
         short num2 = (short) num;
         try {
             stream.write((byte) (num2 >> 8));
@@ -238,15 +243,19 @@ public class Montador {
             System.out.println("Montador: erro em escrever arquivo objeto.");
             System.exit(1);
         }
+
+        mapaDeRelocacao.add(relocabilidade);
     }
 
     class OperandoInfo {
         short modoDeEnderecamento;
         int operando;
+        boolean relocabilidade;
 
-        public OperandoInfo(short modoDeEnderecamento, int operando) {
+        public OperandoInfo(short modoDeEnderecamento, int operando, boolean relocabilidade) {
             this.modoDeEnderecamento = modoDeEnderecamento;
             this.operando = operando;
+            this.relocabilidade = relocabilidade;
         }
     }
 
@@ -267,19 +276,19 @@ public class Montador {
     OperandoInfo processarOperando(String operando, short posição) {
         switch (operando.charAt(0)) {
             case 'H':   // operando imediato hexadecimal (exemplo: H'45G6')
-                return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.decode("0x" + operando.split("\'")[1]));
+                return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.decode("0x" + operando.split("\'")[1]), false);
             case '@':   // operando imediato decimal
-                return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.parseInt(operando.substring(1)));
+                return new OperandoInfo(Bitmasks.ENDERECAMENTO_IMEDIATO, Integer.parseInt(operando.substring(1)), false);
             case '&':   // endereçamento indireto
                 if (simbolosExternos.contains(operando.substring(1))) {
                     tabelaDeUsos.put(operando.substring(1), posição);
                 }
-                return new OperandoInfo(Bitmasks.ENDERECAMENTO_INDIRETO_OP1, pegaEnderecoDeSimbolo(operando.substring(1)));
+                return new OperandoInfo(Bitmasks.ENDERECAMENTO_INDIRETO_OP1, pegaEnderecoDeSimbolo(operando.substring(1)), true);
             default:    // um rótulo (endereçamento direto)
                 if (simbolosExternos.contains(operando)) {
                     tabelaDeUsos.put(operando, posição);
                 }
-                return new OperandoInfo((short) 0, pegaEnderecoDeSimbolo(operando));
+                return new OperandoInfo((short) 0, pegaEnderecoDeSimbolo(operando), true);
         }
     }
 
@@ -309,10 +318,19 @@ public class Montador {
             PrintStream outStream = new PrintStream(arquivo);    
             Tabelas.escreveTabelaDeDefinicoes(tabelaDeDefinicoes, outStream);
             Tabelas.escreveTabelaDeUso(tabelaDeUsos, outStream);
+            outStream.append("# mapaDeRelocacao: " + escreverMapaDeRelocacao(mapaDeRelocacao) + "\n");
             outStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    String escreverMapaDeRelocacao(ArrayList<Boolean> mapa) {
+        String out = "";
+        for (Boolean bit : mapa) {
+            out += bit ? "1" : "0";
+        }
+        return out;
     }
 
     public static void main(String[] args) {

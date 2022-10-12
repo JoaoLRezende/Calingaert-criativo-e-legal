@@ -1,15 +1,8 @@
-        EXTR pipi
-        EXTR xixi
-        EXTDEF source
-        EXTDEF dest
-        EXTDEF x
-
-        MULT pipi
-        SUB xixi
-        MULT xixi
-        MULT @5
-
+        ADD source
+        MULT x
+        SUB dest
         STOP
+
 source  CONST @69
 x       CONST @420
 dest    CONST @111
