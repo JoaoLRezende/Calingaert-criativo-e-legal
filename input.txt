@@ -1,9 +1,7 @@
-        ADD source
-        MULT x
-        SUB dest
-        STOP
+        MACRO
+        MACRINHO ARGUMENT
+        ADD ARGUMENT
+        MEND
 
-source  CONST @69
-x       CONST @420
-dest    CONST @111
-        END
+        MACRINHO 1
+        
