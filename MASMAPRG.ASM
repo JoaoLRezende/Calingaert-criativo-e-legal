@@ -1,0 +1,3 @@
+ADD 1 2
+COPY 2 1
+STOP

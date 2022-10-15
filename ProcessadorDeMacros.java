@@ -28,8 +28,6 @@ public class ProcessadorDeMacros {
         boolean modoDeExpansão = false;
         HashMap<String, Macro> tabelaDeMacros = new HashMap<>();
         Macro macroSendoDefinida = null;
-        Macro macroSendoExpandida = null;
-        String[] argumentosDaMacroSendoExpandida = null;
         while (fileScanner.hasNext()) {
             String linha = fileScanner.nextLine();
             Scanner lineScanner = new Scanner(linha);
@@ -59,13 +57,36 @@ public class ProcessadorDeMacros {
                     macroSendoDefinida = new Macro(parâmetros);
                     tabelaDeMacros.put(nomeDaMacro, macroSendoDefinida);
                  } else if (tabelaDeMacros.containsKey(opcode)) { // ser for uma chamada de macro
-                    macroSendoExpandida = tabelaDeMacros.get(opcode);
+                    Macro macroSendoExpandida = tabelaDeMacros.get(opcode);
                     String[] tokensChamada = linha.trim().split("\\s+");
-                    argumentosDaMacroSendoExpandida = Arrays.copyOfRange(tokensChamada, 1, Math.max(2, tokensChamada.length));
+                    String[] argumentosDaMacroSendoExpandida = Arrays.copyOfRange(tokensChamada, 1, Math.max(2, tokensChamada.length));
+
+                    expandirMacro(macroSendoExpandida, argumentosDaMacroSendoExpandida, outStream);
                  }
             }
         }
         System.out.println(tabelaDeMacros);
+    }
+
+    static void expandirMacro(Macro macro, String[] argumentos, PrintStream outStream) {
+        Scanner macroScanner = new Scanner(macro.corpo);
+        while (macroScanner.hasNext()) {
+            String linha = macroScanner.nextLine();
+            Scanner lineScanner = new Scanner(linha);
+
+            while(lineScanner.hasNext()) {
+                String token = lineScanner.next();
+                if (token.charAt(0) == '#') {
+                    int índiceArgumento = Integer.parseInt(token.substring(1));
+                    outStream.append(argumentos[índiceArgumento - 1] + (lineScanner.hasNext() ? " " : ""));
+                } else {
+                    outStream.append(token + (lineScanner.hasNext() ? " " : ""));
+                }
+            }
+            outStream.append("\n");
+            lineScanner.close();
+        }
+        macroScanner.close();
     }
 
     static String substituiReferenciasAParâmetros(String linha, String[] parâmetros) {
