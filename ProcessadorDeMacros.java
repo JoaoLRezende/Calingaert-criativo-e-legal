@@ -62,6 +62,8 @@ public class ProcessadorDeMacros {
                     String[] argumentosDaMacroSendoExpandida = Arrays.copyOfRange(tokensChamada, 1, Math.max(2, tokensChamada.length));
 
                     expandirMacro(macroSendoExpandida, argumentosDaMacroSendoExpandida, outStream);
+                 } else { // se não é definição nem chamada de macro
+                    outStream.append(linha.trim() + "\n");
                  }
             }
         }
