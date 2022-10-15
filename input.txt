@@ -1,3 +1,7 @@
+        START label
+*
+        EXTR arg2
+*
         MACRO
         MACRINHO arg1 arg2
         ADD arg1 arg2
@@ -6,4 +10,15 @@
         MEND
         MACRINHO 1 2
         ADD 2
-
+        ADD arg2
+*
+*
+        MACRO
+        MARQUINHOS arg1 arg2
+        LOAD arg1
+        MULT arg2
+        STORE
+        MEND
+ *
+        MARQUINHOS 42 120
+        STOP

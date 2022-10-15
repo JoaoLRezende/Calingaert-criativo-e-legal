@@ -25,11 +25,14 @@ public class ProcessadorDeMacros {
         PrintStream outStream = new PrintStream(moduloSaida);
         
         boolean modoDeDefinição = false;
-        boolean modoDeExpansão = false;
         HashMap<String, Macro> tabelaDeMacros = new HashMap<>();
         Macro macroSendoDefinida = null;
         while (fileScanner.hasNext()) {
             String linha = fileScanner.nextLine();
+            if (linha.trim().equals("*")) {
+                continue;
+            }
+
             Scanner lineScanner = new Scanner(linha);
 
             String opcode = lineScanner.next();
