@@ -1,6 +1,8 @@
         MACRO
         MACRINHO arg1 arg2
-        ADD arg1 arg2 arg3
+        ADD arg1 arg2
+        COPY arg2 arg1
+        STOP
         MEND
 
         MACRINHO 1
