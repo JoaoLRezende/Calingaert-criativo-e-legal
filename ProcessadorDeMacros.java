@@ -47,7 +47,7 @@ public class ProcessadorDeMacros {
                     String[] tokensPrototipo = protótipo.trim().split("\\s+");
 
                     String nomeDaMacro = tokensPrototipo[0];
-                    String[] parâmetros = Arrays.copyOfRange(tokensPrototipo, 1, Math.max(2, tokensPrototipo.length -1 -1));
+                    String[] parâmetros = Arrays.copyOfRange(tokensPrototipo, 1, Math.max(2, tokensPrototipo.length));
 
                     tabelaDeMacros.put(nomeDaMacro, new Macro(parâmetros));
                 }
