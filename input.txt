@@ -4,6 +4,5 @@
         COPY arg2 arg1
         STOP
         MEND
-
-        MACRINHO 1
+        MACRINHO 1 2
         

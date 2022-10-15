@@ -28,6 +28,8 @@ public class ProcessadorDeMacros {
         boolean modoDeExpansão = false;
         HashMap<String, Macro> tabelaDeMacros = new HashMap<>();
         Macro macroSendoDefinida = null;
+        Macro macroSendoExpandida = null;
+        String[] argumentosDaMacroSendoExpandida = null;
         while (fileScanner.hasNext()) {
             String linha = fileScanner.nextLine();
             Scanner lineScanner = new Scanner(linha);
@@ -45,7 +47,7 @@ public class ProcessadorDeMacros {
                     macroSendoDefinida.corpo += substituiReferenciasAParâmetros(linha, macroSendoDefinida.parâmetros) + "\n";
                 }
 
-            } else {
+            } else { // se não estamos em modo de definição
                 if (opcode.equals("MACRO")) {
                     modoDeDefinição = true;
                     String protótipo = fileScanner.nextLine();
@@ -56,7 +58,11 @@ public class ProcessadorDeMacros {
 
                     macroSendoDefinida = new Macro(parâmetros);
                     tabelaDeMacros.put(nomeDaMacro, macroSendoDefinida);
-                }
+                 } else if (tabelaDeMacros.containsKey(opcode)) { // ser for uma chamada de macro
+                    macroSendoExpandida = tabelaDeMacros.get(opcode);
+                    String[] tokensChamada = linha.trim().split("\\s+");
+                    argumentosDaMacroSendoExpandida = Arrays.copyOfRange(tokensChamada, 1, Math.max(2, tokensChamada.length));
+                 }
             }
         }
         System.out.println(tabelaDeMacros);
