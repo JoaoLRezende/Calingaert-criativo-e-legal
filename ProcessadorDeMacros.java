@@ -27,6 +27,7 @@ public class ProcessadorDeMacros {
         boolean modoDeDefinição = false;
         HashMap<String, Macro> tabelaDeMacros = new HashMap<>();
         Macro macroSendoDefinida = null;
+        int númeroDeExpansões = 0;
         while (fileScanner.hasNext()) {
             String linha = fileScanner.nextLine();
             if (linha.trim().equals("*")) {
@@ -64,7 +65,7 @@ public class ProcessadorDeMacros {
                     String[] tokensChamada = linha.trim().split("\\s+");
                     String[] argumentosDaMacroSendoExpandida = Arrays.copyOfRange(tokensChamada, 1, Math.max(2, tokensChamada.length));
 
-                    expandirMacro(macroSendoExpandida, argumentosDaMacroSendoExpandida, outStream);
+                    expandirMacro(macroSendoExpandida, argumentosDaMacroSendoExpandida, outStream, númeroDeExpansões++);
                  } else { // se não é definição nem chamada de macro
                     outStream.append(linha.trim() + "\n");
                  }
@@ -73,7 +74,7 @@ public class ProcessadorDeMacros {
         System.out.println(tabelaDeMacros);
     }
 
-    static void expandirMacro(Macro macro, String[] argumentos, PrintStream outStream) {
+    static void expandirMacro(Macro macro, String[] argumentos, PrintStream outStream, int contadorDeExpansões) {
         Scanner macroScanner = new Scanner(macro.corpo);
         while (macroScanner.hasNext()) {
             String linha = macroScanner.nextLine();
@@ -85,6 +86,7 @@ public class ProcessadorDeMacros {
                     int índiceArgumento = Integer.parseInt(token.substring(1));
                     outStream.append(argumentos[índiceArgumento - 1] + (lineScanner.hasNext() ? " " : ""));
                 } else {
+                    token = token.replace(".SER", Integer.valueOf(contadorDeExpansões).toString());
                     outStream.append(token + (lineScanner.hasNext() ? " " : ""));
                 }
             }

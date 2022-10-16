@@ -1,24 +1,14 @@
-        START label
+         START label
+         MACRO
+         ABS
+         BRPOS skip.SER
+         MULT @-1
+skip.SER MULT @1
+         MEND
 *
-        EXTR arg2
-*
-        MACRO
-        MACRINHO arg1 arg2
-        ADD arg1 arg2
-        COPY arg2 arg1
-        STOP
-        MEND
-        MACRINHO 1 2
-        ADD 2
-        ADD arg2
-*
-*
-        MACRO
-        MARQUINHOS arg1 arg2
-        LOAD arg1
-        MULT arg2
-        STORE
-        MEND
- *
-        MARQUINHOS 42 120
-        STOP
+         ABS
+         ABS
+         ABS
+         ABS
+         ABS
+         STOP

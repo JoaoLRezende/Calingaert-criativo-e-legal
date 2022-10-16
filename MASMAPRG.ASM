@@ -1,11 +1,17 @@
 START label
-EXTR arg2
-ADD 1 2
-COPY 2 1
-STOP
-ADD 2
-ADD arg2
-LOAD 42
-MULT 120
-STORE
+BRPOS skip0
+MULT @-1
+skip0 MULT @1
+BRPOS skip1
+MULT @-1
+skip1 MULT @1
+BRPOS skip2
+MULT @-1
+skip2 MULT @1
+BRPOS skip3
+MULT @-1
+skip3 MULT @1
+BRPOS skip4
+MULT @-1
+skip4 MULT @1
 STOP
