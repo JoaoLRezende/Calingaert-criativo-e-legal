@@ -21,10 +21,13 @@ public class ProcessadorDeMacros {
     }
 
     static class Parâmetro {
-        public Parâmetro(int nível, int posição) {
+        public Parâmetro(String nome, int nível, int posição) {
+            this.nome = nome;
             this.nível = nível;
             this.posição = posição;
         }
+
+        String nome;
         int nível;
         int posição;
     }
@@ -62,7 +65,7 @@ public class ProcessadorDeMacros {
                 String nomeDaMacro = tokensPrototipo[0];
                 String[] parâmetros = Arrays.copyOfRange(tokensPrototipo, 1, Math.max(2, tokensPrototipo.length));
                 for (int i = 0; i < parâmetros.length; i++) {
-                    pilhaDeParâmetros.add(new Parâmetro(nivelDeDefinição, i));
+                    pilhaDeParâmetros.add(new Parâmetro(parâmetros[i], nivelDeDefinição, i));
                 }
 
                 if (nivelDeDefinição == 1) {
@@ -76,12 +79,12 @@ public class ProcessadorDeMacros {
 
             if (nivelDeDefinição > 0) {
                 if (opcode.equals("MEND")) {
-                    while (pilhaDeParâmetros.peek().nível == nivelDeDefinição) {
+                    while (pilhaDeParâmetros.size() > 0 && pilhaDeParâmetros.peek().nível == nivelDeDefinição) {
                         pilhaDeParâmetros.pop();
                     }
                     nivelDeDefinição -= 1;
                 } else if (nivelDeDefinição > 1) {
-                    macroSendoDefinida.corpo += substituiReferenciasAParâmetros(linha, macroSendoDefinida.parâmetros)
+                    macroSendoDefinida.corpo += substituiReferenciasAParâmetros(linha, macroSendoDefinida.parâmetros, pilhaDeParâmetros)
                             + "\n";
                 }
 
@@ -130,17 +133,22 @@ public class ProcessadorDeMacros {
         macroScanner.close();
     }
 
-    static String substituiReferenciasAParâmetros(String linha, String[] parâmetros) {
-        ArrayList<String> listaParâmetros = new ArrayList<String>(Arrays.asList(parâmetros));
-
+    static String substituiReferenciasAParâmetros(String linha, String[] parâmetros, Stack<Parâmetro> pilhaDeParâmetros) {
         String novaLinha = "";
         Scanner scanner = new Scanner(linha);
         while (scanner.hasNext()) {
             String token = scanner.next();
+            
+            Parâmetro parâmetro = null;
+            for (int i = pilhaDeParâmetros.size() - 1; i >= 0; i--) {
+                if (pilhaDeParâmetros.get(i).nome.equals(token)) {
+                    parâmetro = pilhaDeParâmetros.get(i);
+                    break;
+                }
+            }
 
-            int índiceParâmetro = listaParâmetros.indexOf(token);
-            if (índiceParâmetro != -1) {
-                novaLinha += "#" + (índiceParâmetro + 1) + " ";
+            if (parâmetro != null) {
+                novaLinha += "#(" + parâmetro.nível + "," + parâmetro.posição + ") ";
             } else {
                 novaLinha += token + " ";
             }

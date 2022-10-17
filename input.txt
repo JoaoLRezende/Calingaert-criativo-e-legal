@@ -4,9 +4,9 @@
         OUTER outer_arg1 outer_arg2 outer_arg3
                MACRO
                INNER inner_arg1 inner_arg2 inner_arg3
-               ADD inner_arg
+               ADD inner_arg1 inner_arg2 inner_arg3
                MEND
         MEND
 *
-        OUTER
+        OUTER patati patata oie
         STOP
