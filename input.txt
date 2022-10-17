@@ -1,14 +1,12 @@
-         START label
-         MACRO
-         ABS
-         BRPOS skip.SER
-         MULT @-1
-skip.SER MULT @1
-         MEND
+        START label
 *
-         ABS
-         ABS
-         ABS
-         ABS
-         ABS
-         STOP
+        MACRO
+        OUTER
+               MACRO
+               INNER
+               ADD @1
+               MEND
+        MEND
+*
+        OUTER
+        STOP
