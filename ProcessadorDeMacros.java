@@ -1,11 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Stack;
 
 public class ProcessadorDeMacros {
 
@@ -20,6 +20,15 @@ public class ProcessadorDeMacros {
         String corpo;
     }
 
+    static class Parâmetro {
+        public Parâmetro(int nível, int posição) {
+            this.nível = nível;
+            this.posição = posição;
+        }
+        int nível;
+        int posição;
+    }
+
     static void executar(File moduloEntrada, File moduloSaida) throws FileNotFoundException {
         Scanner fileScanner = new Scanner(moduloEntrada);
 
@@ -29,6 +38,7 @@ public class ProcessadorDeMacros {
         HashMap<String, Macro> tabelaDeMacros = new HashMap<>();
         Macro macroSendoDefinida = null;
         int númeroDeExpansões = 0;
+        Stack<Parâmetro> pilhaDeParâmetros = new Stack<>();
         while (fileScanner.hasNext()) {
             String linha = fileScanner.nextLine();
             if (linha.trim().equals("*")) {
@@ -51,6 +61,9 @@ public class ProcessadorDeMacros {
 
                 String nomeDaMacro = tokensPrototipo[0];
                 String[] parâmetros = Arrays.copyOfRange(tokensPrototipo, 1, Math.max(2, tokensPrototipo.length));
+                for (int i = 0; i < parâmetros.length; i++) {
+                    pilhaDeParâmetros.add(new Parâmetro(nivelDeDefinição, i));
+                }
 
                 if (nivelDeDefinição == 1) {
                     macroSendoDefinida = new Macro(parâmetros);
@@ -63,6 +76,9 @@ public class ProcessadorDeMacros {
 
             if (nivelDeDefinição > 0) {
                 if (opcode.equals("MEND")) {
+                    while (pilhaDeParâmetros.peek().nível == nivelDeDefinição) {
+                        pilhaDeParâmetros.pop();
+                    }
                     nivelDeDefinição -= 1;
                 } else if (nivelDeDefinição > 1) {
                     macroSendoDefinida.corpo += substituiReferenciasAParâmetros(linha, macroSendoDefinida.parâmetros)
@@ -86,9 +102,10 @@ public class ProcessadorDeMacros {
                     outStream.append(linha.trim() + "\n");
                 }
             }
-
+            lineScanner.close();
         }
         System.out.println(tabelaDeMacros);
+        fileScanner.close();
     }
 
     static void expandirMacro(Macro macro, String[] argumentos, PrintStream outStream, int contadorDeExpansões) {

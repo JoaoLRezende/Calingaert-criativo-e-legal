@@ -1,7 +1,1 @@
 START label
-MACRO
-INNER
-*
-ADD @1
-MEND
-STOP

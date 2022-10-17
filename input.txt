@@ -1,10 +1,10 @@
         START label
 *
         MACRO
-        OUTER
+        OUTER outer_arg1 outer_arg2 outer_arg3
                MACRO
-               INNER
-               ADD @1
+               INNER inner_arg1 inner_arg2 inner_arg3
+               ADD inner_arg
                MEND
         MEND
 *
