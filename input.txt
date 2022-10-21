@@ -1,12 +1,14 @@
         START label
 *
         MACRO
-        OUTER outer_arg1 outer_arg2 outer_arg3
+        OUTER outer_arg1
                MACRO
-               INNER inner_arg1 inner_arg2 inner_arg3
-               ADD inner_arg1 inner_arg2 inner_arg3
+               INNER inner_arg
+               ADD outer_arg1
+               ADD inner_arg
                MEND
         MEND
 *
-        OUTER patati patata oie
+        OUTER 5
+
         STOP

@@ -116,11 +116,14 @@ public class ProcessadorDeMacros {
         while (macroScanner.hasNext()) {
             String linha = macroScanner.nextLine();
             Scanner lineScanner = new Scanner(linha);
-
             while (lineScanner.hasNext()) {
                 String token = lineScanner.next();
                 if (token.charAt(0) == '#') {
-                    int índiceArgumento = Integer.parseInt(token.substring(1));
+                    Scanner tokenScanner = new Scanner(token.substring(2, token.length() - 1));
+                    tokenScanner.useDelimiter(",");
+                    int nívelDeDefinição = tokenScanner.nextInt();
+                    int índiceArgumento = tokenScanner.nextInt();
+                    tokenScanner.close();
                     outStream.append(argumentos[índiceArgumento - 1] + (lineScanner.hasNext() ? " " : ""));
                 } else {
                     token = token.replace(".SER", Integer.valueOf(contadorDeExpansões).toString());
