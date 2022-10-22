@@ -56,9 +56,17 @@ public class ProcessadorDeMacros {
                 opcode = lineScanner.next();
             }
 
+            // pseudo-laço que é executado somente uma vez;
+            // usado para que que possamos executar "break" para pular para o fim do bloco.
             while (true) {
                 if (opcode.equals("MACRO")) {
                     nivelDeDefinição += 1;
+                    // Aqui, nós já lemos e processamos também o protótipo que aparece na linha
+                    // seguinte. (Isso diverge do algoritmo do livro do Calingaert, que sempre lê
+                    // exatamente uma linha por iteração deste laço.)
+                    // TODO: nós devemos ler de fileScanner apenas se não estamos em modo de
+                    // expansão. Se estivermos, devemos ler de macroScanner. (Acho que um operador
+                    // ternário serve.)
                     String protótipo = fileScanner.nextLine();
                     String[] tokensPrototipo = protótipo.trim().split("\\s+");
 
