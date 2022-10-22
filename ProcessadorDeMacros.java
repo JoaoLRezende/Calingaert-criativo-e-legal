@@ -95,6 +95,7 @@ public class ProcessadorDeMacros {
                     String[] tokensChamada = linha.trim().split("\\s+");
                     argumentosDaMacroSendoExpandida = Arrays.copyOfRange(tokensChamada, 1,
                             Math.max(2, tokensChamada.length));
+                    break;
                 }
 
                 if (opcode.equals("MEND")) {
