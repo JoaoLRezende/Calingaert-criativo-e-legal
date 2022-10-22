@@ -1,5 +1,3 @@
-        START label
-*
         MACRO
         OUTER outer_arg1
                MACRO
