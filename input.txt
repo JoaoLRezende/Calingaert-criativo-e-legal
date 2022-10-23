@@ -8,5 +8,10 @@
         MEND
 *
         OUTER 5
-
+        INNER 9
+*
         STOP
+
+* saída esperada:
+* ADD 5
+* ADD 9

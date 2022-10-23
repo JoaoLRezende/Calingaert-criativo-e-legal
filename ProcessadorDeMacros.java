@@ -67,7 +67,7 @@ public class ProcessadorDeMacros {
                     // TODO: nós devemos ler de fileScanner apenas se não estamos em modo de
                     // expansão. Se estivermos, devemos ler de macroScanner. (Acho que um operador
                     // ternário serve.)
-                    String protótipo = fileScanner.nextLine();
+                    String protótipo = modoDeExpansão ? macroScanner.nextLine() : fileScanner.nextLine();
                     String[] tokensPrototipo = protótipo.trim().split("\\s+");
 
                     String nomeDaMacro = tokensPrototipo[0];
@@ -99,13 +99,15 @@ public class ProcessadorDeMacros {
                 }
 
                 if (opcode.equals("MEND")) {
-                    argumentosDaMacroSendoExpandida = null;
                     if (nivelDeDefinição == 0) {
+                        argumentosDaMacroSendoExpandida = null;
                         modoDeExpansão = false;
-                    } else if (!modoDeExpansão) {
-                        // desempilhar parâmetros do nível de definição do qual estamos saindo
-                        while (pilhaDeParâmetros.size() > 0 && pilhaDeParâmetros.peek().nível == nivelDeDefinição) {
-                            pilhaDeParâmetros.pop();
+                    } else {
+                        if (!modoDeExpansão) {
+                            // desempilhar parâmetros do nível de definição do qual estamos saindo
+                            while (pilhaDeParâmetros.size() > 0 && pilhaDeParâmetros.peek().nível == nivelDeDefinição) {
+                                pilhaDeParâmetros.pop();
+                            }
                         }
                         nivelDeDefinição -= 1;
                         macroSendoDefinida.corpo += "MEND\n";
@@ -168,11 +170,13 @@ public class ProcessadorDeMacros {
                 tokenScanner.close();
 
                 if (nívelDeDefinição == 1) {
-                    linhaNova += argumentos[índiceArgumento - 1] + (lineScanner.hasNext() ? " " : "");
+                    linhaNova += argumentos[índiceArgumento] + (lineScanner.hasNext() ? " " : "");
                 } else {
                     linhaNova += "#(" + (nívelDeDefinição - 1) + "," + índiceArgumento + ")"
                             + (lineScanner.hasNext() ? " " : "");
                 }
+            } else {
+                linhaNova += token + (lineScanner.hasNext() ? " " : "");
             }
         }
         lineScanner.close();
