@@ -71,7 +71,7 @@ public class ProcessadorDeMacros {
                     String[] tokensPrototipo = protótipo.trim().split("\\s+");
 
                     String nomeDaMacro = tokensPrototipo[0];
-                    String[] parâmetros = Arrays.copyOfRange(tokensPrototipo, 1, Math.max(2, tokensPrototipo.length));
+                    String[] parâmetros = Arrays.copyOfRange(tokensPrototipo, 1, Math.max(1, tokensPrototipo.length));
                     for (int i = 0; i < parâmetros.length; i++) {
                         pilhaDeParâmetros.add(new Parâmetro(parâmetros[i], nivelDeDefinição, i));
                     }
@@ -94,7 +94,7 @@ public class ProcessadorDeMacros {
                     macroScanner = new Scanner(macroSendoExpandida.corpo);
                     String[] tokensChamada = linha.trim().split("\\s+");
                     argumentosDaMacroSendoExpandida = Arrays.copyOfRange(tokensChamada, 1,
-                            Math.max(2, tokensChamada.length));
+                            Math.max(1, tokensChamada.length));
                     break;
                 }
 
