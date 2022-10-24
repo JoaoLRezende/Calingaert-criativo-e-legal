@@ -1,0 +1,17 @@
+        MACRO
+        OUTER outer_arg1
+               MACRO
+               INNER inner_arg
+               ADD outer_arg1
+               ADD inner_arg
+               MEND
+        MEND
+*
+        OUTER 5
+        INNER 9
+*
+        STOP
+
+* saída esperada:
+* ADD 5
+* ADD 9

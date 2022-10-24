@@ -1,17 +1,11 @@
-        MACRO
-        OUTER outer_arg1
-               MACRO
-               INNER inner_arg
-               ADD outer_arg1
-               ADD inner_arg
-               MEND
-        MEND
+MACRO
+    soma1
+    ADD @1
+MEND
 *
-        OUTER 5
-        INNER 9
+MACRO
+    ADD1TBM
+    soma1
+MEND
 *
-        STOP
-
-* saída esperada:
-* ADD 5
-* ADD 9
+ADD1TBM
