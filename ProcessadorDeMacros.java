@@ -31,7 +31,18 @@ public class ProcessadorDeMacros {
         int posição;
     }
 
-    private static int nivelDeExpanção;
+    static class ExpansãoDeMacro {
+        String[] argumentos;
+
+        public ExpansãoDeMacro(String[] argumentos, Scanner scanner, int contadorDeExpansões) {
+            this.argumentos = argumentos;
+            this.scanner = scanner;
+            this.contadorDeExpansões = contadorDeExpansões;
+        }
+
+        Scanner scanner;
+        int contadorDeExpansões;
+    }
 
     static void executar(File moduloEntrada, File moduloSaida) throws FileNotFoundException {
         Scanner fileScanner = new Scanner(moduloEntrada);
@@ -41,13 +52,11 @@ public class ProcessadorDeMacros {
         int nivelDeDefinição = 0;
         int nívelDeExpansão = 0;
         // Scanner da macro que está sendo expandida, se estamos no modo de expansão.
-        Scanner macroScanner = null;
         HashMap<String, Macro> tabelaDeMacros = new HashMap<>();
         Macro macroSendoDefinida = null;
         int númeroDeExpansões = 0;
         Stack<Parâmetro> pilhaDeParâmetros = new Stack<>();
-        Stack<Parâmetro> pilhaDeArgumentos = new Stack<>();
-        Stack<Integer> pilhaDePosiçãoDeRetorno = new Stack<>();
+        Stack<ExpansãoDeMacro> pilhaDeExpansões = new Stack<>();
         String linha = fileScanner.nextLine();
         while (!linha.equals("")) {
             Scanner lineScanner = new Scanner(linha);
@@ -67,7 +76,8 @@ public class ProcessadorDeMacros {
                     // Aqui, nós já lemos e processamos também o protótipo que aparece na linha
                     // seguinte. (Isso diverge do algoritmo do livro do Calingaert, que sempre lê
                     // exatamente uma linha por iteração deste laço.)
-                    String protótipo = modoDeExpansão ? macroScanner.nextLine() : fileScanner.nextLine();
+                    String protótipo = nívelDeExpansão > 1 ? pilhaDeExpansões.peek().scanner.nextLine()
+                            : fileScanner.nextLine();
                     String[] tokensPrototipo = protótipo.trim().split("\\s+");
 
                     String nomeDaMacro = tokensPrototipo[0];
@@ -89,17 +99,12 @@ public class ProcessadorDeMacros {
                 // ser for uma chamada de macro
                 if (tabelaDeMacros.containsKey(opcode)) {
                     if (nivelDeDefinição == 0) {
-
                         nívelDeExpansão += 1;
                         númeroDeExpansões += 1;
                         Macro macroSendoExpandida = tabelaDeMacros.get(opcode);
-                        macroScanner = new Scanner(macroSendoExpandida.corpo);
                         String[] tokensChamada = linha.trim().split("\\s+");
                         String[] argumentos = Arrays.copyOfRange(tokensChamada, 1, Math.max(1, tokensChamada.length));
-                        pilhaDePosiçãoDeRetorno.put(linhaAtual);
-                        for (int i = 0; i < argumentos.length; i++) {
-                            pilhaDeArgumentos.add(new Parâmetro(argumentos[i], nívelDeExpansão, i));
-                        }
+                        pilhaDeExpansões.push(new ExpansãoDeMacro(argumentos, new Scanner(macroSendoExpandida.corpo), númeroDeExpansões));
                     }
                     if (nivelDeDefinição > 0 && nívelDeExpansão == 0) {
                         linha = substituiReferenciasAParâmetros(linha, macroSendoDefinida.parâmetros,
@@ -113,10 +118,8 @@ public class ProcessadorDeMacros {
 
                 if (opcode.equals("MEND")) {
                     if (nivelDeDefinição == 0) {
-                        // desempilhar parâmetros do nível de definição do qual estamos saindo
-                        while (pilhaDeArgumentos.size() > 0 && pilhaDeArgumentos.peek().nível == nívelDeExpansão) {
-                            pilhaDeArgumentos.pop();
-                        }
+                        pilhaDeExpansões.peek().scanner.close();
+                        pilhaDeExpansões.pop();
                         nívelDeExpansão -= 1;
                     } else {
                         if (nívelDeExpansão == 0) {
@@ -131,11 +134,6 @@ public class ProcessadorDeMacros {
                     break;
                 }
 
-                // TODO: mover este if para o final lá, de acordo com o pseudo-código
-                if (modoDeExpansão) {
-                    linha = substituirReferênciasAArgumentos(linha, argumentosDaMacroSendoExpandida);
-                    linha = cocatenarContadorARótulos(linha, númeroDeExpansões);
-                }
                 if (nívelDeExpansão == 0 && nivelDeDefinição > 0) {
                     linha = substituiReferenciasAParâmetros(linha,
                             macroSendoDefinida.parâmetros,
@@ -153,18 +151,28 @@ public class ProcessadorDeMacros {
 
             // ler próxima linha
             if (nívelDeExpansão > 0) {
-                if (macroScanner.hasNext()) {
-                    linha = macroScanner.nextLine();
+                linha = pilhaDeExpansões.peek().scanner.nextLine();
+                linha = substituirReferênciasAArgumentos(linha, pilhaDeExpansões.peek().argumentos);
+                // TODO. garantir que concatenação do contador de expansões tá funcionando OK na
+                // presença de macros aninhadas.
+                // eu imagino que se, durante uma expansão de uma macro A, uma
+                // macro B começa a ser expandida, essa expansão de B deva receber um valor
+                // próprio do
+                // contador; mas o contador deve voltar para o valor da expansão de A quando a
+                // gente voltar a expandir A.
+                // então eu imagino que um valor do contador deva ser associado a cada expansão
+                // de macro (e
+                // então empilhado juntamente na pilha de expansões de macro).
+                linha = cocatenarContadorARótulos(linha, pilhaDeExpansões.peek().contadorDeExpansões);
+            } else {
+                if (fileScanner.hasNext()) {
+                    linha = fileScanner.nextLine();
                 } else {
-                    nívelDeExpansão -= 1;
+                    break;
                 }
-            }
-            if (nívelDeExpansão == 0) {
-                linha = fileScanner.nextLine();
                 while (linha.trim().equals("*")) {
                     linha = fileScanner.nextLine();
                 }
-
             }
         }
 

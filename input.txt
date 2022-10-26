@@ -1,11 +1,11 @@
 MACRO
-    soma1
-    ADD @1
+add   operando
+    ADD @operando
 MEND
 *
 MACRO
-    ADD1TBM
-    soma1
+add_outer
+            add_inner
 MEND
 *
-ADD1TBM
+add_outer
