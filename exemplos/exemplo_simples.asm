@@ -1,0 +1,6 @@
+MACRO
+UMA_MACRO arg
+    ADD arg
+MEND
+*
+UMA_MACRO 5

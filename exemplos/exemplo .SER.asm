@@ -5,6 +5,6 @@
 skip.SER MULT @1        * <- definição de skip
          MEND
 *
-        ABS
-        ABS
+         ABS
+         ABS
         

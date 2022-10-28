@@ -250,6 +250,6 @@ public class ProcessadorDeMacros {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        ProcessadorDeMacros.executar(new File("input.txt"), new File("MASMAPRG.ASM"));
+        ProcessadorDeMacros.executar(new File("exemplos/definições_macros_aninhadas.asm"), new File("MASMAPRG.ASM"));
     }
 }
