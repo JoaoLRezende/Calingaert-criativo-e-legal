@@ -76,7 +76,7 @@ public class ProcessadorDeMacros {
                     // Aqui, nós já lemos e processamos também o protótipo que aparece na linha
                     // seguinte. (Isso diverge do algoritmo do livro do Calingaert, que sempre lê
                     // exatamente uma linha por iteração deste laço.)
-                    String protótipo = nívelDeExpansão > 1 ? pilhaDeExpansões.peek().scanner.nextLine()
+                    String protótipo = nívelDeExpansão > 0 ? pilhaDeExpansões.peek().scanner.nextLine()
                             : fileScanner.nextLine();
                     String[] tokensPrototipo = protótipo.trim().split("\\s+");
 
