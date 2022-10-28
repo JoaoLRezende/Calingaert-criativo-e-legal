@@ -153,16 +153,6 @@ public class ProcessadorDeMacros {
             if (nívelDeExpansão > 0) {
                 linha = pilhaDeExpansões.peek().scanner.nextLine();
                 linha = substituirReferênciasAArgumentos(linha, pilhaDeExpansões.peek().argumentos);
-                // TODO. garantir que concatenação do contador de expansões tá funcionando OK na
-                // presença de macros aninhadas.
-                // eu imagino que se, durante uma expansão de uma macro A, uma
-                // macro B começa a ser expandida, essa expansão de B deva receber um valor
-                // próprio do
-                // contador; mas o contador deve voltar para o valor da expansão de A quando a
-                // gente voltar a expandir A.
-                // então eu imagino que um valor do contador deva ser associado a cada expansão
-                // de macro (e
-                // então empilhado juntamente na pilha de expansões de macro).
                 linha = cocatenarContadorARótulos(linha, pilhaDeExpansões.peek().contadorDeExpansões);
             } else {
                 if (fileScanner.hasNext()) {
@@ -187,15 +177,29 @@ public class ProcessadorDeMacros {
         Scanner lineScanner = new Scanner(linha);
         while (lineScanner.hasNext()) {
             String token = lineScanner.next();
-            if (token.charAt(0) == '#') {
-                Scanner tokenScanner = new Scanner(token.substring(2, token.length() - 1));
+            String tokenSemAmpersandOuArroba;
+            String ampersandOuArroba;
+            switch (token.charAt(0)) {
+                case '&':
+                case '@':
+                ampersandOuArroba = token.substring(0, 1);
+                tokenSemAmpersandOuArroba = token.substring(1);
+                break;
+
+                default:
+                ampersandOuArroba = "";
+                tokenSemAmpersandOuArroba = token;
+            }    
+
+            if (tokenSemAmpersandOuArroba.charAt(0) == '#') {
+                Scanner tokenScanner = new Scanner(tokenSemAmpersandOuArroba.substring(2, tokenSemAmpersandOuArroba.length() - 1));
                 tokenScanner.useDelimiter(",");
                 int nívelDeDefinição = tokenScanner.nextInt();
                 int índiceArgumento = tokenScanner.nextInt();
                 tokenScanner.close();
 
                 if (nívelDeDefinição == 1) {
-                    linhaNova += argumentos[índiceArgumento] + (lineScanner.hasNext() ? " " : "");
+                    linhaNova += ampersandOuArroba + argumentos[índiceArgumento] + (lineScanner.hasNext() ? " " : "");
                 } else {
                     linhaNova += "#(" + (nívelDeDefinição - 1) + "," + índiceArgumento + ")"
                             + (lineScanner.hasNext() ? " " : "");
@@ -227,16 +231,30 @@ public class ProcessadorDeMacros {
         while (scanner.hasNext()) {
             String token = scanner.next();
 
+            String tokenSemAmpersandOuArroba;
+            String ampersandOuArroba;
+            switch (token.charAt(0)) {
+                case '&':
+                case '@':
+                ampersandOuArroba = token.substring(0, 1);
+                tokenSemAmpersandOuArroba = token.substring(1);
+                break;
+
+                default:
+                ampersandOuArroba = "";
+                tokenSemAmpersandOuArroba = token;
+            }
+
             Parâmetro parâmetro = null;
             for (int i = pilhaDeParâmetros.size() - 1; i >= 0; i--) {
-                if (pilhaDeParâmetros.get(i).nome.equals(token)) {
+                if (pilhaDeParâmetros.get(i).nome.equals(tokenSemAmpersandOuArroba)) {
                     parâmetro = pilhaDeParâmetros.get(i);
                     break;
                 }
             }
 
             if (parâmetro != null) {
-                novaLinha += "#(" + parâmetro.nível + "," + parâmetro.posição + ") ";
+                novaLinha += ampersandOuArroba + "#(" + parâmetro.nível + "," + parâmetro.posição + ") ";
             } else {
                 novaLinha += token + " ";
             }
@@ -250,6 +268,6 @@ public class ProcessadorDeMacros {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        ProcessadorDeMacros.executar(new File("exemplos/definições_macros_aninhadas.asm"), new File("MASMAPRG.ASM"));
+        ProcessadorDeMacros.executar(new File("exemplos/exemplo .SER.asm"), new File("MASMAPRG.ASM"));
     }
 }

@@ -8,7 +8,6 @@
         MEND
 *
         OUTER 5
-*
         INNER 9
 *
         STOP

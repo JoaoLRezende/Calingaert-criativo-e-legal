@@ -1,11 +1,11 @@
 MACRO
-add   operando
+add_inner operando
     ADD @operando
 MEND
 *
 MACRO
-add_outer
-            add_inner
+add_outer operando
+    add_inner operando
 MEND
 *
-add_outer
+add_outer 5
