@@ -1,10 +1,7 @@
-         MACRO
-         ABS
-         BRPOS skip.SER * <- referência a skip
-         MULT @-1
-skip.SER MULT @1        * <- definição de skip
-         MEND
+            EXTR     ext_var   * rótulo externo, definido em outro módulo
+            EXTR     glob_var
+            EXTDEF   add_var   * rótulo definido aqui, visível externamente
 *
-        ABS
-        ABS
-        
+add_var     ADD ext_var
+            RET
+glob_var    CONST @49

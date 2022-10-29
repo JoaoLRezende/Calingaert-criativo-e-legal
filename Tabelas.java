@@ -1,6 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -28,17 +25,62 @@ public class Tabelas {
         }
     }
 
-    // TODO
-    void leTabela(HashMap<String, Simbolo> tabela, String arquivoDeSaida) {
-        File arquivo = new File(arquivoDeSaida);
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(arquivo);
-        } catch (FileNotFoundException e) {
-            System.out.println("Tabelas: escreveTabela: erro ao criar arquivo de saída: " + e.getMessage());
-            System.exit(1);
+    static HashMap<String, Simbolo> lerTabelaDeDefinicoes(Scanner entrada) {
+        HashMap<String, Simbolo> tabela = new HashMap<>();
+
+        entrada.nextLine();
+        entrada.nextLine();
+        String linha = entrada.nextLine();
+        while (linha.charAt(0) != '#') {
+            Scanner lineScanner = new Scanner(linha);
+            String nome = lineScanner.next();
+            lineScanner.next(); // lê "|"
+            short endereco = lineScanner.nextShort();
+            lineScanner.next();
+            String modoDeRelocabilidadeString = lineScanner.next();
+            Simbolo.ModoDeRelocabilidade modoDeRelocabilidade;
+            switch (modoDeRelocabilidadeString) {
+                case "RELATIVO":
+                    modoDeRelocabilidade = Simbolo.ModoDeRelocabilidade.RELATIVO;
+                    break;
+                case "ABSOLUTO":
+                    modoDeRelocabilidade = Simbolo.ModoDeRelocabilidade.ABSOLUTO;
+                    break;
+
+                default:
+                    modoDeRelocabilidade = null;
+            }
+
+            Simbolo símbolo = new Simbolo(endereco, modoDeRelocabilidade);
+            tabela.put(nome, símbolo);
+            
+            lineScanner.close();
+            linha = entrada.nextLine();
         }
 
-        
+        return tabela;
     }
+
+    static HashMap<String, Short> lerTabelaDeUsos(Scanner entrada) {
+        HashMap<String, Short> tabela = new HashMap<>();
+
+        entrada.nextLine();
+
+        String linha = entrada.nextLine();
+        while(linha.charAt(0) != '#') {
+            Scanner lineScanner = new Scanner(linha);
+            String nome = lineScanner.next();
+            lineScanner.next(); // lê "|"
+            short endereco = lineScanner.nextShort();
+
+            tabela.put(nome, endereco);
+
+            lineScanner.close();
+            linha = entrada.nextLine();
+        }
+
+        return tabela;
+    }
+
 }
+

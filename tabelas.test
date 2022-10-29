@@ -1,5 +1,11 @@
 # tabela de definições
 simbolo    | endereco   | relocabilidade
+add_var    | 0          | ABSOLUTO  
+oie    | 4          | RELATIVO  
 # tabela de usos
 simbolo    | endereco  
-# mapaDeRelocacao: 0101010000
+ext_var    | 1         
+ext_v34r    | 4         
+macaco    | 6         
+# mapaDeRelocacao: 
+0100

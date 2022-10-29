@@ -318,7 +318,7 @@ public class Montador {
             PrintStream outStream = new PrintStream(arquivo);    
             Tabelas.escreveTabelaDeDefinicoes(tabelaDeDefinicoes, outStream);
             Tabelas.escreveTabelaDeUso(tabelaDeUsos, outStream);
-            outStream.append("# mapaDeRelocacao: " + escreverMapaDeRelocacao(mapaDeRelocacao) + "\n");
+            outStream.append("# mapaDeRelocacao: \n" + escreverMapaDeRelocacao(mapaDeRelocacao) + "\n");
             outStream.close();
         } catch (IOException e) {
             e.printStackTrace();
