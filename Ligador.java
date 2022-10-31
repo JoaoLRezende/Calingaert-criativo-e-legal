@@ -10,7 +10,5 @@ public class Ligador {
         System.out.println(tabelaDeDefinições);
         HashMap<String, Short> tabelaDeUsos = Tabelas.lerTabelaDeUsos(scanner);
         System.out.println(tabelaDeUsos);
-
-
     }
 }

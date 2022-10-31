@@ -1,7 +1,7 @@
 # tabela de definições
 simbolo    | endereco   | relocabilidade
 add_var    | 0          | ABSOLUTO  
-oie    | 4          | RELATIVO  
+oie        | 4          | RELATIVO  
 # tabela de usos
 simbolo    | endereco  
 ext_var    | 1         

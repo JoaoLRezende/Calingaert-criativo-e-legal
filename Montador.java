@@ -29,8 +29,11 @@ public class Montador {
 
     ArrayList<Boolean> mapaDeRelocacao = new ArrayList<>();
 
-    public Montador(File modulo) {
-        this.modulo = modulo;
+    String arquivoDeEntrada;
+
+    public Montador(String arquivoDeEntrada) {
+        this.arquivoDeEntrada = arquivoDeEntrada;
+        this.modulo = new File(arquivoDeEntrada);
 
         if(!verificaTamanhoLinhas(modulo)) {
             System.out.println("Erro: módulo de entrada tem linha maior que 80 caracteres.");
@@ -121,7 +124,7 @@ public class Montador {
             System.exit(1);
         }
 
-        File arquivoObjeto = new File("esperanca.obj");
+        File arquivoObjeto = new File(arquivoDeEntrada.replace(arquivoDeEntrada.substring(arquivoDeEntrada.indexOf(".")), ".OBJ"));
         try {
             arquivoObjeto.createNewFile();
         } catch (IOException e) {
@@ -313,7 +316,7 @@ public class Montador {
         segundoPasso();
 
         try {
-            String outputFilename = "tabelas.test";
+            String outputFilename = arquivoDeEntrada.replace(arquivoDeEntrada.substring(arquivoDeEntrada.indexOf(".")), ".LST");
             File arquivo = new File(outputFilename);
             PrintStream outStream = new PrintStream(arquivo);    
             Tabelas.escreveTabelaDeDefinicoes(tabelaDeDefinicoes, outStream);
@@ -334,7 +337,7 @@ public class Montador {
     }
 
     public static void main(String[] args) {
-        Montador montador = new Montador(new File("input.txt"));
+        Montador montador = new Montador("input.txt");
         montador.executar();
         System.out.println("Tabela de símbolos: "   + montador.tabelaDeSimbolos.toString());
         System.out.println("Tabela de definições: " + montador.tabelaDeDefinicoes.toString());
