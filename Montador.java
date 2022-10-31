@@ -337,7 +337,7 @@ public class Montador {
     }
 
     public static void main(String[] args) {
-        Montador montador = new Montador("input.txt");
+        Montador montador = new Montador("exemplos/exemplo_simples_2.txt");
         montador.executar();
         System.out.println("Tabela de símbolos: "   + montador.tabelaDeSimbolos.toString());
         System.out.println("Tabela de definições: " + montador.tabelaDeDefinicoes.toString());

@@ -44,7 +44,10 @@ public class ProcessadorDeMacros {
         int contadorDeExpansões;
     }
 
-    static void executar(File moduloEntrada, File moduloSaida) throws FileNotFoundException {
+    static void executar(String nomeModuloEntrada) throws FileNotFoundException {
+        File moduloEntrada = new File(nomeModuloEntrada);
+        File moduloSaida = new File("MASMAPRG.ASM");
+
         Scanner fileScanner = new Scanner(moduloEntrada);
 
         PrintStream outStream = new PrintStream(moduloSaida);
@@ -268,6 +271,6 @@ public class ProcessadorDeMacros {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        ProcessadorDeMacros.executar(new File("exemplos/exemplo .SER.asm"), new File("MASMAPRG.ASM"));
+        ProcessadorDeMacros.executar("exemplos/exemplo_simples.asm");
     }
 }

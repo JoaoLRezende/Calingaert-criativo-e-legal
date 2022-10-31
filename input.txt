@@ -1,7 +1,0 @@
-            EXTR     ext_var   * rótulo externo, definido em outro módulo
-            EXTR     glob_var
-            EXTDEF   add_var   * rótulo definido aqui, visível externamente
-*
-add_var     ADD ext_var
-            RET
-glob_var    CONST @49
