@@ -10,7 +10,7 @@ public enum InstrucaoDados {
     LOAD(3, 2),
     MULT(14, 2),
     READ(12, 2),
-    RET(16, 1),
+    RET(9, 1),
     STOP(11, 1),
     STORE(7, 2),
     SUB(6, 2),
