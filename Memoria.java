@@ -1,33 +1,24 @@
 public class Memoria {
     
-    //definir:
-    // tamanho, vetor da memória.
-
-    //funções:
-    // de ler e escrever na memória. 
-    // modificar tamanho da memória. 
-
-    //funções de apoio:
-    //pegar endereço da memória
     private int memTamanho = 10000;
-    private int[] memoria;
+    private short[] memoria;
     static final int STACK_LIMIT = 100;
 
     Memoria(int numPalavras){
         memTamanho = numPalavras;
-        memoria = new int[memTamanho];
+        memoria = new short[memTamanho];
         memoria[2] = STACK_LIMIT;
     }
 
-    public int[] printMemoria() {
+    public short[] printMemoria() {
         return memoria;
     }
 
-    public void set(int endereco, int conteudo) { 
+    public void set(short endereco, short conteudo) { 
             memoria[endereco] = conteudo;
     }
 
-    public int get(int endereco){
+    public short get(short endereco){
         return memoria[endereco];
     }
 

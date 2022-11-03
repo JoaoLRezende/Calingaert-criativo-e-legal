@@ -1,11 +1,11 @@
 class Executor {
     static final int STACK_LIMIT = 100;
 
-    int contadorDePrograma = STACK_LIMIT;
+    short contadorDePrograma = STACK_LIMIT;
     int acumulador;
     int registradorDeInstrucao;
     Memoria memoria;
-    int ponteiroDaPilha = 3;
+    short ponteiroDaPilha = 3;
 
     boolean terminou = false;
 
@@ -21,18 +21,18 @@ class Executor {
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
                     acumulador += memoria.get(contadorDePrograma++);
                 } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                    int enderecoDoEndereco = memoria.get(contadorDePrograma++);
-                    int endereco = memoria.get(enderecoDoEndereco);
+                    short enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(enderecoDoEndereco);
                     acumulador += memoria.get(endereco);
                 } else { // endereçamento direto
-                    int endereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(contadorDePrograma++);
                     acumulador += memoria.get(endereco);
                 }
                 break;
 
             case Opcodes.BR:
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                    int enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                    short enderecoDoEndereco = memoria.get(contadorDePrograma++);
                     contadorDePrograma = memoria.get(enderecoDoEndereco);
                 } else { // endereçamento direto
                     contadorDePrograma = memoria.get(contadorDePrograma);
@@ -42,7 +42,7 @@ class Executor {
             case Opcodes.BRNEG:
                 if (acumulador < 0) {
                     if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                        int enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                        short enderecoDoEndereco = memoria.get(contadorDePrograma++);
                         contadorDePrograma = memoria.get(enderecoDoEndereco);
                     } else { // endereçamento direto
                         contadorDePrograma = memoria.get(contadorDePrograma);
@@ -55,7 +55,7 @@ class Executor {
             case Opcodes.BRPOS:
                 if (acumulador > 0) {
                     if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                        int enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                        short enderecoDoEndereco = memoria.get(contadorDePrograma++);
                         contadorDePrograma = memoria.get(enderecoDoEndereco);
                     } else { // endereçamento direto
                         contadorDePrograma = memoria.get(contadorDePrograma);
@@ -68,7 +68,7 @@ class Executor {
             case Opcodes.BRZERO:
                 if (acumulador == 0) {
                     if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                        int enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                        short enderecoDoEndereco = memoria.get(contadorDePrograma++);
                         contadorDePrograma = memoria.get(enderecoDoEndereco);
                     } else { // endereçamento direto
                         contadorDePrograma = memoria.get(contadorDePrograma);
@@ -79,9 +79,9 @@ class Executor {
                 break;
 
             case Opcodes.CALL:
-                memoria.set(ponteiroDaPilha++, (contadorDePrograma + 1));
+                memoria.set(ponteiroDaPilha++, (short) (contadorDePrograma + 1));
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                    int enderecoDoEndereco = memoria.get(contadorDePrograma);
+                    short enderecoDoEndereco = memoria.get(contadorDePrograma);
                     contadorDePrograma = memoria.get(enderecoDoEndereco);
                 } else {
                     contadorDePrograma = memoria.get(contadorDePrograma);
@@ -94,10 +94,10 @@ class Executor {
                 break;
 
             case Opcodes.COPY:
-                int enderecoDoOp1, op2;
+                short enderecoDoOp1, op2;
                 // pegar enderecoDoOp1
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                    int enderecoDoEnderecoDoOp1 = memoria.get(contadorDePrograma++);
+                    short enderecoDoEnderecoDoOp1 = memoria.get(contadorDePrograma++);
                     enderecoDoOp1 = memoria.get(enderecoDoEnderecoDoOp1);
                 } else { // endereçamento direto
                     enderecoDoOp1 = memoria.get(contadorDePrograma++);
@@ -105,13 +105,13 @@ class Executor {
 
                 // pegar op2
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP2) > 0) {
-                    int enderecoDoEnderecoDoOp2 = memoria.get(contadorDePrograma++);
-                    int enderecoDoOp2 = memoria.get(enderecoDoEnderecoDoOp2);
+                    short enderecoDoEnderecoDoOp2 = memoria.get(contadorDePrograma++);
+                    short enderecoDoOp2 = memoria.get(enderecoDoEnderecoDoOp2);
                     op2 = memoria.get(enderecoDoOp2);
                 } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
                     op2 = memoria.get(contadorDePrograma++);
                 } else {
-                    int enderecoDoOp2 = memoria.get(contadorDePrograma++);
+                    short enderecoDoOp2 = memoria.get(contadorDePrograma++);
                     op2 = memoria.get(enderecoDoOp2);
                 }
 
@@ -122,11 +122,11 @@ class Executor {
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
                     acumulador = acumulador / memoria.get(contadorDePrograma++);
                 } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                    int enderecoDoEndereco = memoria.get(contadorDePrograma++);
-                    int endereco = memoria.get(enderecoDoEndereco);
+                    short enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(enderecoDoEndereco);
                     acumulador = acumulador / memoria.get(endereco);
                 } else { // endereçamento direto
-                    int endereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(contadorDePrograma++);
                     acumulador = acumulador / memoria.get(endereco);
                 }
                 break;
@@ -135,11 +135,11 @@ class Executor {
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
                     acumulador = acumulador * memoria.get(contadorDePrograma++);
                 } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                    int enderecoDoEndereco = memoria.get(contadorDePrograma++);
-                    int endereco = memoria.get(enderecoDoEndereco);
+                    short enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(enderecoDoEndereco);
                     acumulador = acumulador * memoria.get(endereco);
                 } else { // endereçamento direto
-                    int endereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(contadorDePrograma++);
                     acumulador = acumulador * memoria.get(endereco);
                 }
                 break;
@@ -148,11 +148,11 @@ class Executor {
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
                     acumulador = acumulador - memoria.get(contadorDePrograma++);
                 } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                    int enderecoDoEndereco = memoria.get(contadorDePrograma++);
-                    int endereco = memoria.get(enderecoDoEndereco);
+                    short enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(enderecoDoEndereco);
                     acumulador = acumulador - memoria.get(endereco);
                 } else { // endereçamento direto
-                    int endereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(contadorDePrograma++);
                     acumulador = acumulador - memoria.get(endereco);
                 }
                 break;
@@ -161,11 +161,11 @@ class Executor {
                 if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_IMEDIATO) > 0) {
                     acumulador = memoria.get(contadorDePrograma++);
                 } else if ((registradorDeInstrucao & Bitmasks.ENDERECAMENTO_INDIRETO_OP1) > 0) {
-                    int enderecoDoEndereco = memoria.get(contadorDePrograma++);
-                    int endereco = memoria.get(enderecoDoEndereco);
+                    short enderecoDoEndereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(enderecoDoEndereco);
                     acumulador = memoria.get(endereco);
                 } else { // endereçamento direto
-                    int endereco = memoria.get(contadorDePrograma++);
+                    short endereco = memoria.get(contadorDePrograma++);
                     acumulador = memoria.get(endereco);
                 }
                 break;
@@ -182,7 +182,7 @@ class Executor {
     }
 
     private void checkStackSize() {
-        if (ponteiroDaPilha > memoria.get(2)) {
+        if (ponteiroDaPilha > memoria.get((short) 2)) {
             System.out.println("Stack overflow.");
             System.exit(1);
         }
@@ -204,21 +204,21 @@ class Executor {
     public static void main(String[] args) {
         Memoria memoria = new Memoria(1000);
 
-        memoria.set(STACK_LIMIT + 0, Opcodes.ADD | Bitmasks.ENDERECAMENTO_IMEDIATO);
-        memoria.set(STACK_LIMIT + 1,10);
+        // memoria.set(STACK_LIMIT + 0, Opcodes.ADD | Bitmasks.ENDERECAMENTO_IMEDIATO);
+        // memoria.set(STACK_LIMIT + 1,10);
 
-        // chama a funcao subtrai1
-        memoria.set(STACK_LIMIT + 2, Opcodes.CALL);
-        memoria.set(STACK_LIMIT + 3, STACK_LIMIT + 50);
-        memoria.set(STACK_LIMIT + 4, Opcodes.STOP);
+        // // chama a funcao subtrai1
+        // memoria.set(STACK_LIMIT + 2, Opcodes.CALL);
+        // memoria.set(STACK_LIMIT + 3, STACK_LIMIT + 50);
+        // memoria.set(STACK_LIMIT + 4, Opcodes.STOP);
         
-        // funcao subtrai1
-        memoria.set(STACK_LIMIT + 50, Opcodes.LOAD | Bitmasks.ENDERECAMENTO_INDIRETO_OP1);
-        memoria.set(STACK_LIMIT + 51, STACK_LIMIT + 60);
-        memoria.set(STACK_LIMIT + 52, Opcodes.RET);
+        // // funcao subtrai1
+        // memoria.set(STACK_LIMIT + 50, Opcodes.LOAD | Bitmasks.ENDERECAMENTO_INDIRETO_OP1);
+        // memoria.set(STACK_LIMIT + 51, STACK_LIMIT + 60);
+        // memoria.set(STACK_LIMIT + 52, Opcodes.RET);
 
-        memoria.set(STACK_LIMIT + 60, STACK_LIMIT + 61);
-        memoria.set(STACK_LIMIT + 61, 56);
+        // memoria.set(STACK_LIMIT + 60, STACK_LIMIT + 61);
+        // memoria.set(STACK_LIMIT + 61, 56);
 
         Executor executor = new Executor(memoria);
 

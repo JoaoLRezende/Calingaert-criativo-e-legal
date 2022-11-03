@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.Set;
@@ -12,8 +11,6 @@ import java.util.ArrayList;
 
 public class Montador {
     File modulo;
-
-    // TODO: garantir que os nomes das tabelas abaixo são realmente os nomes usados pelo Ferrugem.
 
     // Tabela de símbolos internos ao módulo que está sendo montado.
     HashMap<String, Simbolo> tabelaDeSimbolos = new HashMap<>();
@@ -337,7 +334,7 @@ public class Montador {
     }
 
     public static void main(String[] args) {
-        Montador montador = new Montador("exemplos/definição_glob_var.txt");
+        Montador montador = new Montador("exemplos/chamada_add_var.txt");
         montador.executar();
         System.out.println("Tabela de símbolos: "   + montador.tabelaDeSimbolos.toString());
         System.out.println("Tabela de definições: " + montador.tabelaDeDefinicoes.toString());
