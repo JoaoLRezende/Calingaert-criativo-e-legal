@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Ligador {
 
-    short contadorDePosição = 0;
+    short contadorDePosição = Executor.STACK_LIMIT;
     HashMap<String, Simbolo> tabelaDeSímbolosGlobal = new HashMap<>();
 
     public Ligador(String[] arquivosDeEntrada) throws IOException {
