@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.IOException;
+
 class Executor {
     static final int STACK_LIMIT = 100;
 
@@ -201,8 +204,9 @@ class Executor {
     }
 
 
-    public static void main(String[] args) {
-        Memoria memoria = new Memoria(1000);
+    public static void main(String[] args) throws IOException {
+
+        Memoria memoria = new Memoria(1000, new File("exemplos/chamada_add_var.HPX"));
 
         // memoria.set(STACK_LIMIT + 0, Opcodes.ADD | Bitmasks.ENDERECAMENTO_IMEDIATO);
         // memoria.set(STACK_LIMIT + 1,10);
